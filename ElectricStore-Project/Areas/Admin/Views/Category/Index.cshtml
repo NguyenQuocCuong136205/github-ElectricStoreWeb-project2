@@ -1,0 +1,23 @@
+@model IEnumerable<ElectricStore_Project.Models.Category>
+
+@{
+    ViewData["Title"] = "Category management page";
+}
+
+<h1>@ViewData["Title"]</h1>
+<div>
+    <a href="@Url.Action("Create", "Category")" class="btn btn-primary">Thêm mới danh mục</a>
+</div>
+@foreach (var item in Model)
+{
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5 class="card-title">@item.Name</h5>
+            <a href="@Url.Action("Edit", "Category", new { id = item.Id })" class="btn btn-primary">Edit</a>
+            <form asp-action="Delete" asp-route-id="@item.Id" method="post" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn xóa danh mục này không?');">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+        </div>
+    </div>
+}

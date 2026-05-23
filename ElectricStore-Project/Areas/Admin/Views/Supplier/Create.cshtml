@@ -1,0 +1,77 @@
+@model ElectricStore_Project.Models.Supplier
+
+@{
+    ViewData["Title"] = "Supplier detail page";
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+    <head>
+        <title>@ViewData["Title"]</title>
+    </head>
+
+    <body>
+    <form asp-action="Create" method="post">
+        <!-- Validation Summary -->
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-3 py-2 small"></div>
+
+        <div class="mb-3">
+            <label asp-for="Name" class="form-label small fw-bold">Tên nhà cung cấp</label>
+            <input asp-for="Name" class="form-control" placeholder="Nhập tên nhà cung cấp mới..." />
+            <span asp-validation-for="Name" class="text-danger small"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Address" class="form-label small fw-bold">Địa chỉ</label>
+            <input asp-for="Address" class="form-control" placeholder="Nhập địa chỉ..." />
+            <span asp-validation-for="Address" class="text-danger small"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Phone" class="form-label small fw-bold">Số điện thoại</label>
+            <input asp-for="Phone" class="form-control" placeholder="Nhập số điện thoại..." />
+            <span asp-validation-for="Phone" class="text-danger small"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Email" class="form-label small fw-bold">Email</label>
+            <input asp-for="Email" type="email" class="form-control" placeholder="Nhập email..." />
+            <span asp-validation-for="Email" class="text-danger small"></span>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="d-grid gap-2 mt-4">
+            <button type="submit" class="btn btn-primary py-2">Thêm mới</button>
+        </div>
+    </form>
+
+    <!-- notification -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // Cấu hình định dạng cửa sổ Toast nhỏ ở góc trên bên phải
+        const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000, // Tự động ẩn sau 3 giây
+        timerProgressBar: true,
+        didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer)
+        toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+        });
+
+        // Kiểm tra xem Server có gửi TempData["ErrorMessage"] về không (nếu có dùng)
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <text>
+                Toast.fire({
+                icon: 'error',
+                title: '@TempData["ErrorMessage"]'
+                });
+            </text>
+        }
+    </script>
+
+    </body>
+</html>

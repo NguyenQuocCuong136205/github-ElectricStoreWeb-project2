@@ -1,0 +1,57 @@
+@{
+    ViewData["Title"] = "Admin Page";
+}
+
+@* Kiểm tra đăng nhập và quyền Admin trước khi hiển thị trang quản trị *@
+@if (User.Identity == null || !User.Identity.IsAuthenticated || !User.IsInRole("Admin"))
+{
+    TempData["ErrorMessage"] = "Tài khoản không được xác minh hoặc không có quyền truy cập Admin!";
+    Context.Response.Redirect("/");
+    return;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+    <body>
+        <h2>This is admin home page</h2>
+
+    <!-- notification -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // Cấu hình định dạng cửa sổ Toast nhỏ ở góc trên bên phải
+        const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000, // Tự động ẩn sau 3 giây
+        timerProgressBar: true,
+        didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer)
+        toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+        });
+
+        // Kiểm tra xem Server có gửi TempData["SuccessMessage"] về không
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <text>
+                Toast.fire({
+                icon: 'success',
+                title: '@TempData["SuccessMessage"]'
+                });
+            </text>
+        }
+
+        // Kiểm tra xem Server có gửi TempData["ErrorMessage"] về không (nếu có dùng)
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <text>
+                Toast.fire({
+                icon: 'error',
+                title: '@TempData["ErrorMessage"]'
+                });
+            </text>
+        }
+    </script>
+    </body>
+</html>

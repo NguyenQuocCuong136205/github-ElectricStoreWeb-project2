@@ -1,0 +1,238 @@
+@inject ElectricStore_Project.Models.ElectronicStoreContext _dbContext
+@{
+    List<ElectricStore_Project.Models.Category> dbCategories = new List<ElectricStore_Project.Models.Category>();
+    try
+    {
+        dbCategories = _dbContext.Categories.ToList();
+    }
+    catch (Exception)
+    {
+        // Fail-safe mock categories in case the database is not initialized yet or is offline
+        dbCategories = new List<ElectricStore_Project.Models.Category>
+        {
+            new ElectricStore_Project.Models.Category { Id = 1, Name = "Điện thoại" },
+            new ElectricStore_Project.Models.Category { Id = 2, Name = "Máy tính" }
+        };
+    }
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - ElectriStore</title>
+    <script type="importmap"></script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/ElectricStore_Project.styles.css" asp-append-version="true" />
+    <style>
+        body {
+        font-family: 'Inter', sans-serif;
+        background-color: #f8f9fa;
+        }
+
+        /* Long Premium Search Bar Styling */
+        .search-group {
+        border: 2px solid #ced4da !important;
+        border-radius: 6px !important;
+        overflow: hidden !important;
+        background-color: #ffffff;
+        transition: all 0.2s ease-in-out;
+        }
+
+        .search-group:focus-within {
+        border-color: #0d6efd !important;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.18) !important;
+        }
+
+
+        /* Dynamic Category Item Hover Effects */
+        .category-item-link {
+        font-size: 13.5px;
+        color: #495057 !important;
+        background-color: #ffffff;
+        border: 1px solid rgba(0, 0, 0, 0.05) !important;
+        transition: all 0.2s ease-in-out;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.02) !important;
+        }
+
+        .category-item-link:hover {
+        background-color: #e8f0fe !important;
+        color: #0d6efd !important;
+        border-color: rgba(13, 110, 253, 0.25) !important;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(13, 110, 253, 0.08) !important;
+        }
+
+        .hover-primary:hover {
+        color: #0d6efd !important;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-md navbar-light bg-white border-bottom box-shadow mb-3 py-3">
+            <div class="container d-flex flex-column align-items-stretch gap-2">
+
+                <!-- ROW 1: Brand Logo, Search Bar, and Authentication Links -->
+                <div class="d-flex align-items-center justify-content-between flex-wrap flex-md-nowrap gap-3">
+
+                    <!-- Brand Brand Logo -->
+                    <a class="navbar-brand fw-bold text-primary fs-3 d-flex align-items-center mb-0" asp-area="" asp-controller="Home" asp-action="Index" style="letter-spacing: -0.5px;">
+                        <i class="bi bi-lightning-charge-fill me-1 text-primary"></i>ElectriStore
+                    </a>
+
+                    <!-- Long Search Bar -->
+                    <form class="d-flex flex-grow-1 mx-md-4 my-2 my-md-0" action="/" method="get" style="max-width: 720px;">
+                        <div class="input-group search-group w-100">
+                            <input type="text" name="query" class="form-control border-0 px-3 py-2.5" placeholder="Tìm kiếm sản phẩm trên ElectriStore..." aria-label="Search" value="@ViewData["SearchQuery"]" style="box-shadow: none; outline: none; font-size: 14.5px;">
+                            <button class="btn btn-primary border-0 px-4 d-flex align-items-center justify-content-center" type="submit" style="background-color: #0d6efd; border-radius: 0; transition: background-color 0.2s;">
+                                <i class="bi bi-search text-white fs-5"></i>
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Authentication Block -->
+                    <div class="d-flex align-items-center gap-2">
+                        @if (User.Identity != null && User.Identity.IsAuthenticated)
+                        {
+                            <!-- Authenticated View -->
+                            <a class="btn btn-outline-primary rounded-pill px-3 py-2 fw-semibold d-flex align-items-center gap-2" asp-area="" asp-controller="User" asp-action="Information" style="font-size: 14.5px;">
+                                <i class="bi bi-person-circle fs-5"></i>Tài khoản (@User.Identity.Name)
+                            </a>
+                        }
+                    </div>
+                </div>
+
+                <!-- ROW 2: Dynamic Database-Driven Categories and Store Links -->
+                <div class="d-flex align-items-center justify-content-between border-top pt-2 mt-2 flex-wrap gap-2">
+
+                    <!-- Category quick links container -->
+                    <div class="d-flex align-items-center gap-3 flex-wrap">
+                        <span class="text-secondary small fw-bold text-uppercase me-1" style="letter-spacing: 0.5px; font-size: 11px;">Danh mục:</span>
+
+                        @foreach (var cat in dbCategories)
+                        {
+                            var catName = cat.Name ?? "Danh mục";
+                            string imgUrl = "https://cdn-icons-png.flaticon.com/512/709/709612.png"; // default icon
+
+                            // Dynamically map corresponding images based on case-insensitive matches
+                            if (catName.Contains("điện thoại", StringComparison.OrdinalIgnoreCase) || catName.Contains("phone", StringComparison.OrdinalIgnoreCase))
+                            {
+                                imgUrl = "https://cdn-icons-png.flaticon.com/512/3616/3616215.png";
+                            }
+                            else if (catName.Contains("máy tính", StringComparison.OrdinalIgnoreCase) || catName.Contains("computer", StringComparison.OrdinalIgnoreCase) || catName.Contains("laptop", StringComparison.OrdinalIgnoreCase))
+                            {
+                                imgUrl = "https://cdn-icons-png.flaticon.com/512/3030/3030336.png";
+                            }
+                            else if (catName.Contains("máy ảnh", StringComparison.OrdinalIgnoreCase) || catName.Contains("camera", StringComparison.OrdinalIgnoreCase))
+                            {
+                                imgUrl = "https://cdn-icons-png.flaticon.com/512/3004/3004613.png";
+                            }
+                            else if (catName.Contains("tai nghe", StringComparison.OrdinalIgnoreCase) || catName.Contains("headphone", StringComparison.OrdinalIgnoreCase))
+                            {
+                                imgUrl = "https://cdn-icons-png.flaticon.com/512/1211/1211463.png";
+                            }
+                            else if (catName.Contains("đồng hồ", StringComparison.OrdinalIgnoreCase) || catName.Contains("watch", StringComparison.OrdinalIgnoreCase))
+                            {
+                                imgUrl = "https://cdn-icons-png.flaticon.com/512/3103/3103138.png";
+                            }
+                            else if (catName.Contains("phụ kiện", StringComparison.OrdinalIgnoreCase) || catName.Contains("accessory", StringComparison.OrdinalIgnoreCase))
+                            {
+                                imgUrl = "https://cdn-icons-png.flaticon.com/512/3067/3067260.png";
+                            }
+
+                            <a href="/?query=@(System.Net.WebUtility.UrlEncode(catName))" class="category-item-link px-3 py-1.5 rounded-pill border-0 d-flex align-items-center gap-2 fw-semibold text-decoration-none shadow-sm">
+                                <img src="@imgUrl" alt="@catName" style="width: 18px; height: 18px; object-fit: contain;" />
+                                <span>@catName</span>
+                            </a>
+                        }
+                    </div>
+                </div>
+
+                <!-- ROW 3: navigate bar for admin check -->
+                <div class="d-flex align-items-center justify-content-between border-top pt-2 mt-2 flex-wrap gap-2">
+                    <div class="d-flex align-items-center gap-3 flex-wrap">
+                        <span class="text-secondary small fw-bold text-uppercase me-1" style="letter-spacing: 0.5px; font-size: 11px;">Kiểm tra:</span>
+
+                        <a class="btn btn-light rounded-pill px-3 py-2 fw-medium text-dark border-0" asp-area="Admin" asp-controller="Category" asp-action="Index" style="font-size: 14.5px;">
+                            <i class="bi bi-box-arrow-in-right me-1"></i>Danh mục
+                        </a>
+                        <a class="btn btn-light rounded-pill px-3 py-2 fw-medium text-dark border-0" asp-area="Admin" asp-controller="Brand" asp-action="Index" style="font-size: 14.5px;">
+                            <i class="bi bi-box-arrow-in-right me-1"></i>Thương hiệu
+                        </a>
+                        <a class="btn btn-light rounded-pill px-3 py-2 fw-medium text-dark border-0" asp-area="Admin" asp-controller="Country" asp-action="Index" style="font-size: 14.5px;">
+                            <i class="bi bi-box-arrow-in-right me-1"></i>Quốc gia
+                        </a>
+                        <a class="btn btn-light rounded-pill px-3 py-2 fw-medium text-dark border-0" asp-area="Admin" asp-controller="Supplier" asp-action="Index" style="font-size: 14.5px;">
+                            <i class="bi bi-box-arrow-in-right me-1"></i>Nhà cung cấp
+                        </a>
+
+                    </div>
+                </div>
+
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2026 - ElectricStore_Project - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // Cấu hình định dạng cửa sổ Toast nhỏ ở góc trên bên phải
+        const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000, // Tự động ẩn sau 3 giây
+        timerProgressBar: true,
+        didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer)
+        toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+        });
+
+        // Kiểm tra xem Server có gửi TempData["SuccessMessage"] về không
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <text>
+                Toast.fire({
+                icon: 'success',
+                title: '@TempData["SuccessMessage"]'
+                });
+            </text>
+        }
+
+        // Kiểm tra xem Server có gửi TempData["ErrorMessage"] về không (nếu có dùng)
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <text>
+                Toast.fire({
+                icon: 'error',
+                title: '@TempData["ErrorMessage"]'
+                });
+            </text>
+        }
+    </script>
+
+</body>
+</html>

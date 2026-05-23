@@ -1,0 +1,24 @@
+@model IEnumerable<ElectricStore_Project.Models.Brand>
+
+@{
+    ViewData["Title"] = "Brand management page";
+}
+
+<h1>@ViewData["Title"]</h1>
+<div>
+<div>
+    <a href="@Url.Action("Create", "Brand")" class="btn btn-primary">Thêm mới thương hiệu</a>
+</div>
+@foreach (var item in Model)
+{
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5 class="card-title">@item.BrandName</h5>
+            <a href="@Url.Action("Edit", "Brand", new { id = item.Id })" class="btn btn-primary">Edit</a>
+            <form asp-action="Delete" asp-route-id="@item.Id" method="post" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn xóa thương hiệu này không?');">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+        </div>
+    </div>
+}

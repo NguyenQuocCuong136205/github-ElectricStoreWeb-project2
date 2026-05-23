@@ -1,0 +1,371 @@
+﻿@model List<ElectricStore_Project.DTOs.Products.ProductDisplayDTO>
+
+@{
+    ViewData["Title"] = "Điện máy ElectriStore - Gợi Ý Cho Bạn";
+}
+
+<style>
+    .home-section-title {
+        font-family: 'Inter', sans-serif;
+        font-weight: 700;
+        font-size: 1.6rem;
+        color: #212529;
+        margin-bottom: 25px;
+        position: relative;
+        display: inline-block;
+        padding-bottom: 8px;
+    }
+
+        .home-section-title::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, #ff5722, #ff8a65);
+            border-radius: 2px;
+        }
+
+    /* Premium Product Card Redesign */
+    .product-card {
+        background-color: #ffffff;
+        border: 1px solid rgba(0, 0, 0, 0.06);
+        border-radius: 12px;
+        transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.22s;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        position: relative;
+        overflow: hidden;
+    }
+
+        /* Delicate hover shadow elevation */
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08) !important;
+            border-color: rgba(26, 115, 232, 0.15);
+        }
+
+    /* Installment Badge top-left */
+    .installment-badge {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        z-index: 5;
+        background-color: #f5a623;
+        color: #ffffff;
+        font-size: 11px;
+        font-weight: 600;
+        padding: 4px 8px;
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Crispy technology image container */
+    .img-container {
+        height: 170px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+        background-color: #fafafa;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.02);
+    }
+
+        .img-container img {
+            max-height: 100%;
+            max-width: 100%;
+            object-fit: contain;
+            transition: transform 0.3s ease;
+        }
+
+    .product-card:hover .img-container img {
+        transform: scale(1.04);
+    }
+
+    /* Product Specs Tag */
+    .specs-badge {
+        font-size: 11px;
+        background-color: #f1f3f4;
+        color: #5f6368;
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-weight: 500;
+        display: inline-block;
+        margin-bottom: 8px;
+    }
+
+    /* Clamp text to strictly 2 lines for uniform layout */
+    .product-name-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: #202124;
+        line-height: 20px;
+        height: 40px;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        margin-bottom: 8px;
+        text-decoration: none;
+        transition: color 0.15s;
+    }
+
+        .product-name-title:hover {
+            color: #1a73e8;
+        }
+
+    /* Price Section */
+    .price-promo {
+        color: #d93025;
+        font-size: 16px;
+        font-weight: 700;
+    }
+
+    .price-original {
+        color: #70757a;
+        font-size: 13px;
+        text-decoration: line-through;
+        margin-left: 6px;
+    }
+
+    /* Gift Info Block */
+    .gift-box {
+        background-color: #e6f4ea;
+        color: #137333;
+        font-size: 11.5px;
+        padding: 6px 10px;
+        border-radius: 6px;
+        margin-top: 12px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-weight: 500;
+        border: 1px solid rgba(19, 115, 51, 0.08);
+    }
+
+        .gift-box i {
+            font-size: 13px;
+        }
+
+    /* Star review and sales count block */
+    .review-line {
+        font-size: 12px;
+        color: #5f6368;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        margin-top: 12px;
+        border-top: 1px solid #f1f3f4;
+        padding-top: 8px;
+    }
+
+        .review-line .star-icon {
+            color: #f5a623;
+        }
+
+        .review-line .divider {
+            color: #dadce0;
+            margin: 0 4px;
+        }
+
+    /* Redesigned clean button outline */
+    .btn-show-more-custom {
+        border: 2px solid #1a73e8;
+        color: #1a73e8;
+        background-color: #ffffff;
+        font-weight: 600;
+        padding: 10px 45px;
+        border-radius: 30px;
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 5px rgba(26,115,232,0.08);
+    }
+
+        .btn-show-more-custom:hover {
+            background-color: #1a73e8;
+            color: #ffffff;
+            box-shadow: 0 4px 10px rgba(26,115,232,0.2);
+        }
+</style>
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+</head>
+<body>
+    <div class="container py-4">
+        <!-- Home Banner Placeholder / Header Area -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="p-5 text-center bg-dark text-white rounded-4 shadow-sm position-relative overflow-hidden"
+                     style="background: linear-gradient(135deg, #1e2640 0%, #111525 100%); min-height: 220px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                    <!-- Decorative absolute glow -->
+                    <div class="position-absolute top-50 start-50 translate-middle" style="width: 300px; height: 300px; background: radial-gradient(circle, rgba(26,115,232,0.15) 0%, rgba(0,0,0,0) 70%); z-index: 1;"></div>
+
+                    <h1 class="display-5 fw-bold mb-2 position-relative" style="z-index: 2; font-family: 'Inter', sans-serif;">ElectriStore</h1>
+                    <p class="lead mb-0 text-white-50 position-relative" style="z-index: 2;">Trải nghiệm mua sắm thiết bị gia dụng và công nghệ hàng đầu Việt Nam</p>
+                </div>
+            </div>
+        </div>
+
+        @* @if (ViewData["SearchQuery"] != null)
+        {
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="alert alert-light border d-flex align-items-center justify-content-between py-3 px-4 rounded-3 shadow-sm" style="border-radius: 12px !important;">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="bg-primary bg-opacity-10 text-primary rounded-circle p-2.5 d-flex align-items-center justify-content-center" style="width: 45px; height: 45px; border-radius: 50% !important; background-color: rgba(13, 110, 253, 0.1) !important;">
+                                <i class="bi bi-search fs-5" style="color: #0d6efd;"></i>
+                            </div>
+                            <div>
+                                <h5 class="mb-0 fw-bold text-dark" style="font-size: 16px;">Kết quả tìm kiếm</h5>
+                                <p class="text-secondary small mb-0">Tìm thấy <span class="fw-semibold text-primary">@Model.Count</span> sản phẩm cho từ khóa "<span class="fw-semibold text-dark">@ViewData["SearchQuery"]</span>"</p>
+                            </div>
+                        </div>
+                        <a href="/" class="btn btn-outline-secondary rounded-pill btn-sm px-3 py-1.5 fw-semibold" style="font-size: 13px;">
+                            <i class="bi bi-x-lg me-1"></i>Xóa tìm kiếm
+                        </a>
+                    </div>
+                </div>
+            </div>
+        } *@
+
+        <!-- MAIN PRODUCT SECTION: Gợi ý cho bạn -->
+        @* <div class="row mb-3">
+            <div class="col-12">
+                <h2 class="home-section-title">@(ViewData["SearchQuery"] != null ? "Sản phẩm tìm thấy" : "Gợi ý cho bạn")</h2>
+            </div>
+        </div> *@
+
+        <!-- Responsive Grid Layout (4 columns on Desktop, 2 columns on Mobile) -->
+        <div class="row row-cols-2 row-cols-md-4 g-3 g-md-4" id="product-grid">
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                var product = Model[i];
+                var isHidden = ViewData["SearchQuery"] == null && i >= 8; // Only hide items starting from index 8 if not searching
+
+                <div class="col product-card-wrapper @(isHidden ? "d-none" : "")" data-index="@i">
+                    <div class="product-card p-3">
+                        <div class="w-100 position-relative">
+                            <!-- Installment Tag -->
+                            @if (!string.IsNullOrEmpty(product.IstallmentTag))
+                            {
+                                <span class="installment-badge">@product.IstallmentTag</span>
+                            }
+
+                            <!-- Sharp Product Image Container -->
+                            <div class="img-container rounded-3 mb-3">
+                                <img src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&q=80&w=400" alt="@product.Name" loading="lazy" />
+                            </div>
+
+                            <!-- Config Specification Badge -->
+                            @* @if (!string.IsNullOrEmpty(product.spec))
+                            {
+                                <span class="specs-badge">@product.Specifications</span>
+                            } *@
+
+                            <!-- Clickable Title -->
+                            <a href="#" class="product-name-title d-block" title="@product.Name">@product.Name</a>
+
+                            <!-- Pricing Row -->
+                            <div class="d-flex align-items-baseline flex-wrap">
+                                <span class="price-promo">@product.SalePrice.ToString("N0")₫</span>
+                                @if (product.OriginalPrice > product.SalePrice)
+                                {
+                                    <span class="price-original">@product.OriginalPrice.ToString("N0")₫</span>
+                                }
+                            </div>
+
+                            <!-- Premium Free Gift Badge -->
+                            @if (!string.IsNullOrEmpty(product.GiftInfo))
+                            {
+                                <div class="gift-box">
+                                    <i class="bi bi-gift-fill text-success"></i>
+                                    <span class="text-truncate" title="@product.GiftInfo">@product.GiftInfo</span>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Bottom Stars & Sales Review Block -->
+                        <div class="review-line mt-auto">
+                            <span class="fw-semibold">@product.Rating</span>
+                            <i class="bi bi-star-fill star-icon"></i>
+                            <span class="divider">|</span>
+                            <span>Đã bán @product.SalceCount</span>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Instant JavaScript Show-More Expansion Button -->
+        @* @if (ViewData["SearchQuery"] == null && Model.Count > 8)
+        {
+            <div class="row mt-5" id="btn-show-more-wrapper">
+                <div class="col-12 text-center">
+                    <button type="button" class="btn btn-show-more-custom shadow-sm" id="btn-show-more">
+                        Xem thêm <span class="fw-bold text-primary-emphasis">@(Model.Count - 8)</span> sản phẩm <i class="bi bi-chevron-down ms-1"></i>
+                    </button>
+                </div>
+            </div>
+        } *@
+    </div>
+
+    <!-- SweetAlert2 Success & Error Toast Popup Notifications -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000, // Tự động ẩn sau 3 giây
+        timerProgressBar: true,
+        didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer)
+        toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+        });
+
+        // Kiểm tra xem Server có gửi TempData["SuccessMessage"] về không
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <text>
+                Toast.fire({
+                icon: 'success',
+                title: '@TempData["SuccessMessage"]'
+                });
+            </text>
+        }
+
+        // Kiểm tra xem Server có gửi TempData["ErrorMessage"] về không (nếu có dùng)
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <text>
+                Toast.fire({
+                icon: 'error',
+                title: '@TempData["ErrorMessage"]'
+                });
+            </text>
+        }
+
+        // Modern Vanilla JavaScript toggle show-more logic (Fast, flat, no distracting heavy animations)
+        document.getElementById('btn-show-more')?.addEventListener('click', function () {
+        // Find all hidden product wrappers
+        const hiddenProducts = document.querySelectorAll('#product-grid .product-card-wrapper.d-none');
+
+        // Remove the display-none utility class instantly
+        hiddenProducts.forEach(el => {
+        el.classList.remove('d-none');
+        });
+
+        // Hide the button wrapper completely
+        const btnWrapper = document.getElementById('btn-show-more-wrapper');
+        if (btnWrapper) {
+        btnWrapper.style.display = 'none';
+        }
+        });
+    </script>
+</body>
+</html>

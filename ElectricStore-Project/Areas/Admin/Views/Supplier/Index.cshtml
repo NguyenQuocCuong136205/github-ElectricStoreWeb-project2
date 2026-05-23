@@ -1,0 +1,28 @@
+@model IEnumerable<ElectricStore_Project.Models.Supplier>
+
+@{
+    ViewData["Title"] = "Supplier management page";
+}
+
+<h1>@ViewData["Title"]</h1>
+<div>
+<div>
+    <a href="@Url.Action("Create", "Supplier")" class="btn btn-primary">Thêm mới nhà cung cấp</a>
+</div>
+@foreach (var item in Model)
+{
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5 class="card-title">@item.Name</h5>
+            <p class="card-text mb-1"><strong>Địa chỉ:</strong> @item.Address</p>
+            <p class="card-text mb-1"><strong>Số điện thoại:</strong> @item.Phone</p>
+            <p class="card-text mb-2"><strong>Email:</strong> @item.Email</p>
+            <a href="@Url.Action("Edit", "Supplier", new { id = item.Id })" class="btn btn-primary">Edit</a>
+            <form asp-action="Delete" asp-route-id="@item.Id" method="post" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn xóa nhà cung cấp này không?');">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+        </div>
+    </div>
+}
+</div>
