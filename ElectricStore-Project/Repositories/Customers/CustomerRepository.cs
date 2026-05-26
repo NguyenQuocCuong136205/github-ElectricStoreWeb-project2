@@ -1,4 +1,5 @@
 ﻿using ElectricStore_Project.DTOs.Customers;
+using ElectricStore_Project.DTOs.Login;
 using ElectricStore_Project.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,6 +12,34 @@ namespace ElectricStore_Project.Repositories.Customers
         public CustomerRepository(ElectronicStoreContext context)
         {
             _context = context;
+        }
+
+        public async Task<UserLoginDataDTO?> GetUserByEmailForLoginAsync(string email)
+        {
+            //return await _context.Users
+            //    .Select(p => new UserLoginDataDTO
+            //    {
+            //        Id = p.Id,
+            //        FullName = p.FullName,
+            //        Email = p.Email,
+            //        PasswordHash = p.PasswordHash,
+            //        Role = p.RoleId,
+            //        IsActive = p.IsActive
+            //    }).FirstOrDefaultAsync();
+            var query = _context.Users
+                .Where(u => u.Email == email)
+                .Select(p => new UserLoginDataDTO
+                {
+                    Id = p.Id,
+                    FullName = p.FullName,
+                    Email = p.Email,
+                    PasswordHash = p.PasswordHash,
+                    Role = p.RoleId,
+                    IsActive = p.IsActive
+                }).FirstOrDefaultAsync();
+
+            var qeuryString = query.ToString();
+            return await query;
         }
 
         public async Task<IEnumerable<ShowableCustomerInfor>> GetAllCustomersAsync()
@@ -26,6 +55,16 @@ namespace ElectricStore_Project.Repositories.Customers
             });
 
             return customerList;
+        }
+
+        //public async Task<ShowableCustomerInfor> GetAllInforOfaCustomerAsync(int id)
+        //{
+
+        //}
+
+        public async Task<User?> GetCustomerByIdAsync(int id)
+        {
+            return await _context.Users.FindAsync(id);
         }
 
         public async Task<User?> GetCustomerByEmailAsync(string email)

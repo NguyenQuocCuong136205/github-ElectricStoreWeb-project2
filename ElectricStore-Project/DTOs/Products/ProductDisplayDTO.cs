@@ -10,6 +10,7 @@ namespace ElectricStore_Project.DTOs.Products
         public string Category { get; set; }
         public decimal OriginalPrice {  get; set; }
         public decimal SalePrice { get; set; }
+        //public decimal imporetprice { get; set; }
         public int StockQuantity { get; set; }
         public string SupplierName { get; set; }
         public string MadeIn { get; set; }
@@ -19,7 +20,5 @@ namespace ElectricStore_Project.DTOs.Products
         public string IstallmentTag { get; set; }
         public string? Description { get; set; }
         public bool IsActive { get; set; }
-
-        
     }
 }

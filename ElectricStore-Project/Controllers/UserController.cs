@@ -8,6 +8,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using ElectricStore_Project.Models;
 
 
 namespace ElectricStore_Project.Controllers
@@ -25,7 +26,8 @@ namespace ElectricStore_Project.Controllers
         public ActionResult Login() => View();
 
         [HttpPost]
-        public async Task<ActionResult> Login(LoginRequestDTO loginForm) {
+        public async Task<ActionResult> Login(LoginRequestDTO loginForm)
+        {
             if (!ModelState.IsValid)
             {
                 return View(loginForm);
@@ -38,6 +40,7 @@ namespace ElectricStore_Project.Controllers
             {
                 var claims = new List<Claim>
                 {
+                    new Claim(ClaimTypes.NameIdentifier, result.UserId.ToString()),
                     new Claim(ClaimTypes.Name, result.FullName ?? "User"),
                     new Claim(ClaimTypes.Email, result.Email ?? ""),
                     new Claim(ClaimTypes.Role, result.Role ?? "User")
@@ -57,7 +60,7 @@ namespace ElectricStore_Project.Controllers
                 if (result.Role == "Admin")
                 {
                     TempData["SuccessMessage"] = "Chào mừng Admin!";
-                    return RedirectToAction("Index", "Home", new { area = "Admin"});
+                    return RedirectToAction("Index", "Home", new { area = "Admin" });
                 }
 
                 TempData["SuccessMessage"] = "Chào mừng quay trở lại!";
@@ -65,7 +68,7 @@ namespace ElectricStore_Project.Controllers
             }
 
             ModelState.AddModelError(string.Empty, result.ErrorMessage ?? "Đăng nhập thất bại");
-            return View(loginForm); 
+            return View(loginForm);
         }
 
         [HttpGet]
@@ -100,19 +103,25 @@ namespace ElectricStore_Project.Controllers
         [Authorize]
         public async Task<ActionResult> Information()
         {
-            var email = User.FindFirst(ClaimTypes.Email)?.Value;
-            if (string.IsNullOrEmpty(email))
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userId))
             {
                 return RedirectToAction("Login", "User");
             }
 
-            var user = await _userService.GetUserByEmailAsync(email);
+            var user = await _userService.GetUserProfileAsync(int.Parse(userId));
             if (user == null)
             {
                 return RedirectToAction("Login", "User");
             }
 
             return View(user);
+        }
+
+        public ActionResult PurchasedOrders()
+        {
+            return View();
         }
     }
 }

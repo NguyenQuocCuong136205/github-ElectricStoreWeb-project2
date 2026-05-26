@@ -1,10 +1,12 @@
 using ElectricStore_Project.Models;
+using ElectricStore_Project.Repositories.Address;
 using ElectricStore_Project.Repositories.Brands;
 using ElectricStore_Project.Repositories.Categories;
 using ElectricStore_Project.Repositories.Countries;
 using ElectricStore_Project.Repositories.Customers;
 using ElectricStore_Project.Repositories.Products;
 using ElectricStore_Project.Repositories.Suppliers;
+using ElectricStore_Project.Services.Addresses;
 using ElectricStore_Project.Services.Brands;
 using ElectricStore_Project.Services.Categories;
 using ElectricStore_Project.Services.Countries;
@@ -19,6 +21,15 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+//builder.Services.AddStackExchangeRedisCache(options =>
+//{
+//    options.Configuration = builder.Configuration.GetConnectionString("RedisConnection") ?? "localhost:6379";
+//    options.InstanceName = "ElectricStore_"; // Tiền tố tránh trùng lặp key
+//});
+
+// dùng tạo cache tạm thời trong bộ nhớ, không dùng Redis
+builder.Services.AddDistributedMemoryCache();
+
 // lấy chuỗi kết nối từ appsetting
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
@@ -27,12 +38,12 @@ builder.Services.AddDbContext<ElectronicStoreContext>(options => options.UseSqlS
 
 // thêm repositories vào DI container
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
-//builder.Services.AddScoped<IProductRepository, ProductDTORepository>();
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<IBrandRepository, BrandRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ICountryRepository, CountryRepository>();
 builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
+builder.Services.AddScoped<IAddressRepository, AddressRepository>();
 
 // thêm services vào DI container
 builder.Services.AddScoped<IProductService, ProductService>();
@@ -41,6 +52,7 @@ builder.Services.AddScoped<IBrandService, BrandService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ICountryService, CountryService>();
 builder.Services.AddScoped<ISupplierService, SupplierService>();
+builder.Services.AddScoped<IAddressService, AddressService>();
 
 // Đăng ký Cookie Authentication
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -50,7 +62,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.AccessDeniedPath = "/User/AccessDenied";
     });
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

@@ -1,58 +1,47 @@
 @model ElectricStore_Project.Models.Country
 
 @{
-    ViewData["Title"] = "Country detail page";
+    ViewData["Title"] = "Thêm Mới Quốc Gia";
 }
 
-<!DOCTYPE html>
-<html lang="vi">
-    <head>
-        <title>@ViewData["Title"]</title>
-    </head>
+<div class="container mt-4" style="max-width: 640px;">
+    <div class="mb-4">
+        <h2 class="mb-1 text-primary fw-bold">Thêm Mới Quốc Gia</h2>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Home" asp-action="Index">Admin</a></li>
+                <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Country" asp-action="Index">Quốc gia</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Thêm mới</li>
+            </ol>
+        </nav>
+    </div>
 
-    <body>
-    <form asp-action="Create" method="post">
-        <!-- Validation Summary -->
-        <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-3 py-2 small"></div>
+    <div class="card shadow-sm border-0 rounded-3">
+        <div class="card-body p-4">
+            <form asp-action="Create" method="post">
+                <!-- Validation Summary -->
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-3 py-2 small"></div>
 
-        <div class="mb-3">
-            <label asp-for="Country1" class="form-label small fw-bold">Tên quốc gia</label>
-            <input asp-for="Country1" class="form-control" placeholder="Nhập tên quốc gia mới..." />
-            <span asp-validation-for="Country1" class="text-danger small"></span>
+                <div class="mb-3">
+                    <label asp-for="Country1" class="form-label small fw-semibold text-secondary">Tên quốc gia <span class="text-danger">*</span></label>
+                    <input asp-for="Country1" class="form-control py-2.5 focus-ring" placeholder="Nhập tên quốc gia mới..." required />
+                    <span asp-validation-for="Country1" class="text-danger small"></span>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2 mt-4">
+                    <a asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4 py-2 fw-medium">Hủy bỏ</a>
+                    <button type="submit" class="btn btn-primary rounded-pill px-4 py-2 fw-semibold shadow-sm">
+                        <i class="bi bi-plus-circle me-1"></i> Thêm mới
+                    </button>
+                </div>
+            </form>
         </div>
-        <!-- Submit Button -->
-        <div class="d-grid gap-2 mt-4">
-            <button type="submit" class="btn btn-primary py-2">Thêm mới</button>
-        </div>
-    </form>
+    </div>
+</div>
 
-    <!-- notification -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        // Cấu hình định dạng cửa sổ Toast nhỏ ở góc trên bên phải
-        const Toast = Swal.mixin({
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 3000, // Tự động ẩn sau 3 giây
-        timerProgressBar: true,
-        didOpen: (toast) => {
-        toast.addEventListener('mouseenter', Swal.stopTimer)
-        toast.addEventListener('mouseleave', Swal.resumeTimer)
-        }
-        });
-
-        // Kiểm tra xem Server có gửi TempData["ErrorMessage"] về không (nếu có dùng)
-        @if (TempData["ErrorMessage"] != null)
-        {
-            <text>
-                Toast.fire({
-                icon: 'error',
-                title: '@TempData["ErrorMessage"]'
-                });
-            </text>
-        }
-    </script>
-
-    </body>
-</html>
+<style>
+    .focus-ring:focus {
+        border-color: #0d6efd !important;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important;
+    }
+</style>

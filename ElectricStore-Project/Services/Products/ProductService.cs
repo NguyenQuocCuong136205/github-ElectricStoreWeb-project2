@@ -14,12 +14,19 @@ namespace ElectricStore_Project.Services.Products
             this.productRepository = productRepository;
         }
 
+        public async Task<IEnumerable<Product>> GetProductsAsync()
+        {
+            return await productRepository.GetAllProductsAsync();
+        }
+
+
+        // only show information for user
         public async Task<IEnumerable<ProductDisplayDTO>> GetProductDisplayDTOsAsync()
         {
 
-            var products =  await productRepository.GetAllProductsAsync();
+            var products = await productRepository.GetAllProductsAsync();
 
-            var productList = products.Select( p => new ProductDisplayDTO
+            var productList = products.Select(p => new ProductDisplayDTO
             {
                 Name = p.Name ?? "",
                 Brand = p.Brand != null ? p.Brand.BrandName ?? "No Brand" : "No Brand",
@@ -37,7 +44,7 @@ namespace ElectricStore_Project.Services.Products
 
         public async Task<IEnumerable<ProductDisplayDTO>> GetAllProductByKeywordAsync(string keyword)
         {
-            var products =  await productRepository.GetAllProductByKeyworkAsync(keyword);
+            var products = await productRepository.GetAllProductByKeyworkAsync(keyword);
 
             var productList = products.Select(p => new ProductDisplayDTO
             {
@@ -53,6 +60,13 @@ namespace ElectricStore_Project.Services.Products
             }).ToList();
 
             return productList;
+        }
+
+
+        // used for show all information for admin
+        public async Task<Product?> GetProductByIdAsync(int id)
+        {
+            return await productRepository.GetProductByIdAsync(id);
         }
     }
 }

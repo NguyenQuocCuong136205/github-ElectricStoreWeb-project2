@@ -1,0 +1,498 @@
+@model IEnumerable<ElectricStore_Project.Models.Product>
+
+@{
+    ViewData["Title"] = "Quản Lý Danh Sách Sản Phẩm";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1 text-primary fw-bold">Danh Sách Toàn Bộ Sản Phẩm</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Home" asp-action="Index">Admin</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Sản phẩm</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Interactive Filtering Row -->
+    <div class="card shadow-sm border-0 rounded-3 mb-4 p-3 bg-light border">
+        <div class="d-flex flex-wrap gap-2 align-items-center">
+            <span class="text-secondary fw-bold small me-2"><i class="bi bi-funnel-fill text-primary"></i> BỘ LỌC SẢN PHẨM:</span>
+            
+            <!-- Category Filter (Hover dropdown) -->
+            <div class="dropdown dropdown-hover">
+                <button class="btn btn-sm btn-white border rounded-pill dropdown-toggle px-3" type="button" data-bs-toggle="dropdown" id="filterCategoryBtn">
+                    Danh mục: <span id="selectedCategory" class="text-primary fw-semibold">Tất cả</span>
+                </button>
+                <ul class="dropdown-menu shadow-sm" aria-labelledby="filterCategoryBtn" id="categoryDropdownList">
+                    <li><a class="dropdown-item active" href="#" data-value="">Tất cả danh mục</a></li>
+                </ul>
+            </div>
+
+            <!-- Brand Filter (Hover dropdown) -->
+            <div class="dropdown dropdown-hover">
+                <button class="btn btn-sm btn-white border rounded-pill dropdown-toggle px-3" type="button" data-bs-toggle="dropdown" id="filterBrandBtn">
+                    Thương hiệu: <span id="selectedBrand" class="text-primary fw-semibold">Tất cả</span>
+                </button>
+                <ul class="dropdown-menu shadow-sm" aria-labelledby="filterBrandBtn" id="brandDropdownList">
+                    <li><a class="dropdown-item active" href="#" data-value="">Tất cả thương hiệu</a></li>
+                </ul>
+            </div>
+
+            <!-- Country Filter (Hover dropdown) -->
+            <div class="dropdown dropdown-hover">
+                <button class="btn btn-sm btn-white border rounded-pill dropdown-toggle px-3" type="button" data-bs-toggle="dropdown" id="filterCountryBtn">
+                    Nơi sản xuất: <span id="selectedCountry" class="text-primary fw-semibold">Tất cả</span>
+                </button>
+                <ul class="dropdown-menu shadow-sm" aria-labelledby="filterCountryBtn" id="countryDropdownList">
+                    <li><a class="dropdown-item active" href="#" data-value="">Tất cả quốc gia</a></li>
+                </ul>
+            </div>
+
+            <!-- Sale Price Filter (Click dropdown with inputs & buttons) -->
+            <div class="dropdown" id="priceDropdown">
+                <button class="btn btn-sm btn-white border rounded-pill dropdown-toggle px-3" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" id="filterPriceBtn">
+                    Giá bán: <span id="selectedPrice" class="text-primary fw-semibold">Tất cả</span>
+                </button>
+                <div class="dropdown-menu p-3 shadow-sm" style="min-width: 260px;">
+                    <label class="form-label small fw-semibold text-secondary mb-2">Nhập giá trị (₫)</label>
+                    <div class="input-group input-group-sm mb-2">
+                        <input type="number" class="form-control" id="filterPriceInput" placeholder="Ví dụ: 15000000" />
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-sm btn-warning flex-grow-1 fw-semibold text-dark" id="btnPriceUpper">Upper (>=)</button>
+                        <button class="btn btn-sm btn-outline-warning flex-grow-1 fw-semibold text-dark" id="btnPriceUnder">Under (<=)</button>
+                    </div>
+                    <div class="text-center mt-2 border-top pt-2">
+                        <a href="#" class="small text-danger text-decoration-none" id="btnClearPrice">Xóa bộ lọc</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stock Filter -->
+            <div class="dropdown" id="stockDropdown">
+                <button class="btn btn-sm btn-white border rounded-pill dropdown-toggle px-3" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" id="filterStockBtn">
+                    Tồn kho: <span id="selectedStock" class="text-primary fw-semibold">Tất cả</span>
+                </button>
+                <div class="dropdown-menu p-3 shadow-sm" style="min-width: 260px;">
+                    <label class="form-label small fw-semibold text-secondary mb-2">Nhập số lượng tồn</label>
+                    <div class="input-group input-group-sm mb-2">
+                        <input type="number" class="form-control" id="filterStockInput" placeholder="Ví dụ: 10" />
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-sm btn-warning flex-grow-1 fw-semibold text-dark" id="btnStockUpper">Upper (>=)</button>
+                        <button class="btn btn-sm btn-outline-warning flex-grow-1 fw-semibold text-dark" id="btnStockUnder">Under (<=)</button>
+                    </div>
+                    <div class="text-center mt-2 border-top pt-2">
+                        <a href="#" class="small text-danger text-decoration-none" id="btnClearStock">Xóa bộ lọc</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rating Filter -->
+            <div class="dropdown" id="ratingDropdown">
+                <button class="btn btn-sm btn-white border rounded-pill dropdown-toggle px-3" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" id="filterRatingBtn">
+                    Đánh giá: <span id="selectedRating" class="text-primary fw-semibold">Tất cả</span>
+                </button>
+                <div class="dropdown-menu p-3 shadow-sm" style="min-width: 260px;">
+                    <label class="form-label small fw-semibold text-secondary mb-2">Nhập điểm đánh giá (0-5)</label>
+                    <div class="input-group input-group-sm mb-2">
+                        <input type="number" class="form-control" id="filterRatingInput" min="0" max="5" step="0.1" placeholder="Ví dụ: 4.5" />
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-sm btn-warning flex-grow-1 fw-semibold text-dark" id="btnRatingUpper">Upper (>=)</button>
+                        <button class="btn btn-sm btn-outline-warning flex-grow-1 fw-semibold text-dark" id="btnRatingUnder">Under (<=)</button>
+                    </div>
+                    <div class="text-center mt-2 border-top pt-2">
+                        <a href="#" class="small text-danger text-decoration-none" id="btnClearRating">Xóa bộ lọc</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sale Count Filter -->
+            <div class="dropdown" id="saleCountDropdown">
+                <button class="btn btn-sm btn-white border rounded-pill dropdown-toggle px-3" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" id="filterSaleCountBtn">
+                    Đã bán: <span id="selectedSaleCount" class="text-primary fw-semibold">Tất cả</span>
+                </button>
+                <div class="dropdown-menu p-3 shadow-sm" style="min-width: 260px;">
+                    <label class="form-label small fw-semibold text-secondary mb-2">Nhập số lượng bán</label>
+                    <div class="input-group input-group-sm mb-2">
+                        <input type="number" class="form-control" id="filterSaleCountInput" placeholder="Ví dụ: 100" />
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-sm btn-warning flex-grow-1 fw-semibold text-dark" id="btnSaleCountUpper">Upper (>=)</button>
+                        <button class="btn btn-sm btn-outline-warning flex-grow-1 fw-semibold text-dark" id="btnSaleCountUnder">Under (<=)</button>
+                    </div>
+                    <div class="text-center mt-2 border-top pt-2">
+                        <a href="#" class="small text-danger text-decoration-none" id="btnClearSaleCount">Xóa bộ lọc</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Clear All Button -->
+            <button class="btn btn-sm btn-outline-danger rounded-pill px-3" id="btnClearAllFilters" style="display: none;">
+                <i class="bi bi-x-circle-fill me-1"></i> Xóa tất cả lọc
+            </button>
+        </div>
+    </div>
+
+    <!-- Bảng sản phẩm -->
+    <div class="card shadow-sm border-0 rounded-3 overflow-hidden">
+        <div class="card-header bg-primary text-white py-3">
+            <h5 class="mb-0 fw-semibold d-flex align-items-center">
+                <i class="bi bi-box-seam me-2"></i> Danh Sách Sản Phẩm Trong Cửa Hàng
+            </h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover align-middle mb-0" id="productTable">
+                    <thead class="table-light border-bottom">
+                        <tr>
+                            <th scope="col" class="py-3 px-3 text-center" style="width: 5%">STT</th>
+                            <th scope="col" class="py-3 px-3">Tên sản phẩm</th>
+                            <th scope="col" class="py-3 px-3">Thương hiệu</th>
+                            <th scope="col" class="py-3 px-3">Danh mục</th>
+                            <th scope="col" class="py-3 px-3 text-end">Giá nhập</th>
+                            <th scope="col" class="py-3 px-3 text-end">Giá bán</th>
+                            <th scope="col" class="py-3 px-3 text-end">Giá gốc</th>
+                            <th scope="col" class="py-3 px-3 text-center">Tồn kho</th>
+                            <th scope="col" class="py-3 px-3 text-center">Trạng thái</th>
+                            <th scope="col" class="py-3 px-3 text-center">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productTableBody">
+                        @{
+                            int stt = 1;
+                        }
+                        @foreach (var item in Model)
+                        {
+                            <tr data-category="@(item.Category?.Name ?? "")" 
+                                data-brand="@(item.Brand?.BrandName ?? "")" 
+                                data-country="@(item.MadeInNavigation?.Country1 ?? "")" 
+                                data-price="@(item.SalePrice ?? 0)" 
+                                data-stock="@(item.StockQuantity ?? 0)" 
+                                data-rating="@(item.Rating ?? 0)" 
+                                data-sales="@(item.SaleCount ?? 0)">
+                                <th scope="row" class="text-center text-secondary fw-semibold">@stt</th>
+                                <td class="fw-semibold text-dark px-3">@item.Name</td>
+                                <td>
+                                    <span class="badge bg-light text-dark border px-2.5 py-1.5 rounded-pill">
+                                        <i class="bi bi-tag-fill text-info me-1"></i> @(item.Brand?.BrandName ?? "N/A")
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-light text-dark border px-2.5 py-1.5 rounded-pill">
+                                        <i class="bi bi-folder-fill text-warning me-1"></i> @(item.Category?.Name ?? "N/A")
+                                    </span>
+                                </td>
+                                <td class="text-end text-danger fw-medium px-3">
+                                    @(item.ImportPrice.HasValue ? item.ImportPrice.Value.ToString("N0") + " ₫" : "Chưa cập nhật")
+                                </td>
+                                <td class="text-end text-success fw-bold px-3">
+                                    @(item.SalePrice.HasValue ? item.SalePrice.Value.ToString("N0") + " ₫" : "Chưa cập nhật")
+                                </td>
+                                <td class="text-end text-muted text-decoration-line-through px-3">
+                                    @(item.OriginalPrice.HasValue ? item.OriginalPrice.Value.ToString("N0") + " ₫" : "Chưa cập nhật")
+                                </td>
+                                <td class="text-center fw-semibold">
+                                    <span class="@(item.StockQuantity > 10 ? "text-dark" : "text-danger")">
+                                        @item.StockQuantity chiếc
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    @if (item.IsActive == true)
+                                    {
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2.5 py-1.5">
+                                            <i class="bi bi-check-circle-fill me-1"></i> Đang bán
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-2.5 py-1.5">
+                                            <i class="bi bi-x-circle-fill me-1"></i> Tạm ngưng
+                                        </span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    <a href="@Url.Action("Details", "Product", new { id = item.Id })" class="btn btn-outline-primary btn-sm rounded-pill px-3 fw-semibold hover-transform">
+                                        <i class="bi bi-eye-fill me-1"></i> Chi tiết & Sửa
+                                    </a>
+                                </td>
+                            </tr>
+                            stt++;
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .hover-transform {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .hover-transform:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1) !important;
+    }
+    .dropdown-hover:hover .dropdown-menu {
+        display: block;
+        margin-top: 0;
+    }
+    .btn-white {
+        background-color: #ffffff;
+        color: #495057;
+    }
+    .btn-white:hover {
+        background-color: #f8f9fa;
+        color: #212529;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const tableRows = document.querySelectorAll("#productTableBody tr");
+            
+            // Extract unique categories, brands, and countries dynamically
+            const categories = new Set();
+            const brands = new Set();
+            const countries = new Set();
+            
+            tableRows.forEach(row => {
+                const cat = row.getAttribute("data-category");
+                const brd = row.getAttribute("data-brand");
+                const cnt = row.getAttribute("data-country");
+                
+                if (cat) categories.add(cat);
+                if (brd) brands.add(brd);
+                if (cnt) countries.add(cnt);
+            });
+            
+            // Populate Category dropdown
+            const catList = document.getElementById("categoryDropdownList");
+            categories.forEach(cat => {
+                const li = document.createElement("li");
+                li.innerHTML = `<a class="dropdown-item" href="#" data-value="${cat}">${cat}</a>`;
+                catList.appendChild(li);
+            });
+            
+            // Populate Brand dropdown
+            const brdList = document.getElementById("brandDropdownList");
+            brands.forEach(brd => {
+                const li = document.createElement("li");
+                li.innerHTML = `<a class="dropdown-item" href="#" data-value="${brd}">${brd}</a>`;
+                brdList.appendChild(li);
+            });
+            
+            // Populate Country dropdown
+            const cntList = document.getElementById("countryDropdownList");
+            countries.forEach(cnt => {
+                const li = document.createElement("li");
+                li.innerHTML = `<a class="dropdown-item" href="#" data-value="${cnt}">${cnt}</a>`;
+                cntList.appendChild(li);
+            });
+            
+            // Filter states
+            const filters = {
+                category: "",
+                brand: "",
+                country: "",
+                price: null,      // { value: number, type: 'upper' | 'under' }
+                stock: null,      // { value: number, type: 'upper' | 'under' }
+                rating: null,     // { value: number, type: 'upper' | 'under' }
+                sales: null       // { value: number, type: 'upper' | 'under' }
+            };
+            
+            // Main Filter function
+            function applyFilters() {
+                let visibleCount = 0;
+                tableRows.forEach(row => {
+                    const cat = row.getAttribute("data-category");
+                    const brd = row.getAttribute("data-brand");
+                    const cnt = row.getAttribute("data-country");
+                    const price = parseFloat(row.getAttribute("data-price")) || 0;
+                    const stock = parseInt(row.getAttribute("data-stock")) || 0;
+                    const rating = parseFloat(row.getAttribute("data-rating")) || 0;
+                    const sales = parseInt(row.getAttribute("data-sales")) || 0;
+                    
+                    let show = true;
+                    
+                    if (filters.category && cat !== filters.category) show = false;
+                    if (filters.brand && brd !== filters.brand) show = false;
+                    if (filters.country && cnt !== filters.country) show = false;
+                    
+                    if (filters.price) {
+                        if (filters.price.type === 'upper' && price < filters.price.value) show = false;
+                        if (filters.price.type === 'under' && price > filters.price.value) show = false;
+                    }
+                    
+                    if (filters.stock) {
+                        if (filters.stock.type === 'upper' && stock < filters.stock.value) show = false;
+                        if (filters.stock.type === 'under' && stock > filters.stock.value) show = false;
+                    }
+                    
+                    if (filters.rating) {
+                        if (filters.rating.type === 'upper' && rating < filters.rating.value) show = false;
+                        if (filters.rating.type === 'under' && rating > filters.rating.value) show = false;
+                    }
+                    
+                    if (filters.sales) {
+                        if (filters.sales.type === 'upper' && sales < filters.sales.value) show = false;
+                        if (filters.sales.type === 'under' && sales > filters.sales.value) show = false;
+                    }
+                    
+                    row.style.display = show ? "" : "none";
+                    if (show) visibleCount++;
+                });
+                
+                // Show/hide Clear All button
+                const hasActiveFilters = filters.category || filters.brand || filters.country || 
+                                         filters.price || filters.stock || filters.rating || filters.sales;
+                document.getElementById("btnClearAllFilters").style.display = hasActiveFilters ? "" : "none";
+                
+                // Handle empty state row
+                let emptyMsg = document.getElementById("emptyTableMessage");
+                if (visibleCount === 0) {
+                    if (!emptyMsg) {
+                        emptyMsg = document.createElement("tr");
+                        emptyMsg.id = "emptyTableMessage";
+                        emptyMsg.innerHTML = `<td colspan="10" class="text-center py-4 text-muted"><i class="bi bi-info-circle me-1"></i> Không tìm thấy sản phẩm nào khớp với bộ lọc.</td>`;
+                        document.getElementById("productTableBody").appendChild(emptyMsg);
+                    }
+                } else if (emptyMsg) {
+                    emptyMsg.remove();
+                }
+            }
+            
+            // Category handler
+            document.getElementById("categoryDropdownList").addEventListener("click", function(e) {
+                const link = e.target.closest(".dropdown-item");
+                if (!link) return;
+                e.preventDefault();
+                
+                this.querySelectorAll(".dropdown-item").forEach(item => item.classList.remove("active"));
+                link.classList.add("active");
+                
+                filters.category = link.getAttribute("data-value") || "";
+                document.getElementById("selectedCategory").textContent = filters.category || "Tất cả";
+                applyFilters();
+            });
+            
+            // Brand handler
+            document.getElementById("brandDropdownList").addEventListener("click", function(e) {
+                const link = e.target.closest(".dropdown-item");
+                if (!link) return;
+                e.preventDefault();
+                
+                this.querySelectorAll(".dropdown-item").forEach(item => item.classList.remove("active"));
+                link.classList.add("active");
+                
+                filters.brand = link.getAttribute("data-value") || "";
+                document.getElementById("selectedBrand").textContent = filters.brand || "Tất cả";
+                applyFilters();
+            });
+
+            // Country handler
+            document.getElementById("countryDropdownList").addEventListener("click", function(e) {
+                const link = e.target.closest(".dropdown-item");
+                if (!link) return;
+                e.preventDefault();
+                
+                this.querySelectorAll(".dropdown-item").forEach(item => item.classList.remove("active"));
+                link.classList.add("active");
+                
+                filters.country = link.getAttribute("data-value") || "";
+                document.getElementById("selectedCountry").textContent = filters.country || "Tất cả";
+                applyFilters();
+            });
+
+            // Numeric Setup Helper
+            function setupNumericFilter(field, dropdownId, inputId, btnUpperId, btnUnderId, clearBtnId, labelId, formatter = v => v) {
+                const dropdownEl = document.getElementById(dropdownId);
+                const input = document.getElementById(inputId);
+                const btnUpper = document.getElementById(btnUpperId);
+                const btnUnder = document.getElementById(btnUnderId);
+                const clearBtn = document.getElementById(clearBtnId);
+                const label = document.getElementById(labelId);
+                
+                function setFilter(type) {
+                    const value = parseFloat(input.value);
+                    if (isNaN(value)) {
+                        alert("Vui lòng nhập giá trị số hợp lệ!");
+                        return;
+                    }
+                    filters[field] = { value, type };
+                    label.textContent = `${type === 'upper' ? '≥' : '≤'} ${formatter(value)}`;
+                    
+                    // Close the dropdown
+                    const toggle = dropdownEl.querySelector('.dropdown-toggle');
+                    const dropdown = bootstrap.Dropdown.getOrCreateInstance(toggle);
+                    dropdown.hide();
+                    
+                    applyFilters();
+                }
+                
+                btnUpper.addEventListener("click", () => setFilter('upper'));
+                btnUnder.addEventListener("click", () => setFilter('under'));
+                
+                clearBtn.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    filters[field] = null;
+                    input.value = "";
+                    label.textContent = "Tất cả";
+                    
+                    const toggle = dropdownEl.querySelector('.dropdown-toggle');
+                    const dropdown = bootstrap.Dropdown.getOrCreateInstance(toggle);
+                    dropdown.hide();
+                    
+                    applyFilters();
+                });
+            }
+            
+            // Set up numeric filters
+            setupNumericFilter('price', 'priceDropdown', 'filterPriceInput', 'btnPriceUpper', 'btnPriceUnder', 'btnClearPrice', 'selectedPrice', v => v.toLocaleString() + ' ₫');
+            setupNumericFilter('stock', 'stockDropdown', 'filterStockInput', 'btnStockUpper', 'btnStockUnder', 'btnClearStock', 'selectedStock', v => v + ' chiếc');
+            setupNumericFilter('rating', 'ratingDropdown', 'filterRatingInput', 'btnRatingUpper', 'btnRatingUnder', 'btnClearRating', 'selectedRating', v => v + ' ★');
+            setupNumericFilter('sales', 'saleCountDropdown', 'filterSaleCountInput', 'btnSaleCountUpper', 'btnSaleCountUnder', 'btnClearSaleCount', 'selectedSaleCount', v => v + ' chiếc');
+
+            // Clear all filters
+            document.getElementById("btnClearAllFilters").addEventListener("click", function() {
+                filters.category = "";
+                filters.brand = "";
+                filters.country = "";
+                filters.price = null;
+                filters.stock = null;
+                filters.rating = null;
+                filters.sales = null;
+                
+                document.getElementById("selectedCategory").textContent = "Tất cả";
+                document.getElementById("selectedBrand").textContent = "Tất cả";
+                document.getElementById("selectedCountry").textContent = "Tất cả";
+                document.getElementById("selectedPrice").textContent = "Tất cả";
+                document.getElementById("selectedStock").textContent = "Tất cả";
+                document.getElementById("selectedRating").textContent = "Tất cả";
+                document.getElementById("selectedSaleCount").textContent = "Tất cả";
+                
+                document.getElementById("filterPriceInput").value = "";
+                document.getElementById("filterStockInput").value = "";
+                document.getElementById("filterRatingInput").value = "";
+                document.getElementById("filterSaleCountInput").value = "";
+                
+                document.querySelectorAll(".dropdown-menu .dropdown-item").forEach(item => {
+                    if (item.getAttribute("data-value") === "") {
+                        item.classList.add("active");
+                    } else {
+                        item.classList.remove("active");
+                    }
+                });
+                
+                applyFilters();
+            });
+        });
+    </script>
+}

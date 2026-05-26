@@ -1,23 +1,61 @@
 @model IEnumerable<ElectricStore_Project.Models.Category>
 
 @{
-    ViewData["Title"] = "Category management page";
+    ViewData["Title"] = "Quản Lý Danh Mục";
 }
 
-<h1>@ViewData["Title"]</h1>
-<div>
-    <a href="@Url.Action("Create", "Category")" class="btn btn-primary">Thêm mới danh mục</a>
-</div>
-@foreach (var item in Model)
-{
-    <div class="card mb-3">
-        <div class="card-body">
-            <h5 class="card-title">@item.Name</h5>
-            <a href="@Url.Action("Edit", "Category", new { id = item.Id })" class="btn btn-primary">Edit</a>
-            <form asp-action="Delete" asp-route-id="@item.Id" method="post" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn xóa danh mục này không?');">
-                @Html.AntiForgeryToken()
-                <button type="submit" class="btn btn-danger">Delete</button>
-            </form>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1 text-primary fw-bold">Quản Lý Danh Mục</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Home" asp-action="Index">Admin</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Danh mục</li>
+                </ol>
+            </nav>
         </div>
+        <a href="@Url.Action("Create", "Category")" class="btn btn-primary rounded-pill px-4 shadow-sm">
+            <i class="bi bi-plus-circle me-1"></i> Thêm mới danh mục
+        </a>
     </div>
-}
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        @foreach (var item in Model)
+        {
+            <div class="col">
+                <div class="card h-100 shadow-sm border-0 rounded-3 hover-transform">
+                    <div class="card-body d-flex flex-column justify-content-between">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="bg-warning-subtle text-warning rounded-circle p-3 me-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                                <i class="bi bi-folder-fill fs-4 text-warning"></i>
+                            </div>
+                            <h5 class="card-title fw-bold mb-0 text-dark">@item.Name</h5>
+                        </div>
+                        <div class="d-flex gap-2 justify-content-end mt-2">
+                            <a href="@Url.Action("Edit", "Category", new { id = item.Id })" class="btn btn-outline-warning rounded-pill px-3 btn-sm fw-semibold">
+                                <i class="bi bi-pencil-square me-1"></i> Sửa
+                            </a>
+                            <form asp-action="Delete" asp-route-id="@item.Id" method="post" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn xóa danh mục này không?');">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-outline-danger rounded-pill px-3 btn-sm fw-semibold">
+                                    <i class="bi bi-trash me-1"></i> Xóa
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .hover-transform {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .hover-transform:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1) !important;
+    }
+</style>

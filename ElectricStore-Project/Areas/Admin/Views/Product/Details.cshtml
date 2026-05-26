@@ -1,0 +1,381 @@
+@model ElectricStore_Project.Models.Product
+
+@{
+    ViewData["Title"] = "Chi Tiết Sản Phẩm - " + Model.Name;
+
+    // Cast lists from ViewBag safely
+    var categories = ViewBag.Categories as List<ElectricStore_Project.Models.Category> ?? new List<ElectricStore_Project.Models.Category>();
+    var brands = ViewBag.Brands as List<ElectricStore_Project.Models.Brand> ?? new List<ElectricStore_Project.Models.Brand>();
+    var countries = ViewBag.Countries as List<ElectricStore_Project.Models.Country> ?? new List<ElectricStore_Project.Models.Country>();
+    var suppliers = ViewBag.Suppliers as List<ElectricStore_Project.Models.Supplier> ?? new List<ElectricStore_Project.Models.Supplier>();
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1 text-primary fw-bold">Chi Tiết Sản Phẩm</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Home" asp-action="Index">Admin</a></li>
+                    <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Product" asp-action="Index">Sản phẩm</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">@Model.Name</li>
+                </ol>
+            </nav>
+        </div>
+        <a asp-area="Admin" asp-controller="Product" asp-action="Index" class="btn btn-outline-secondary rounded-pill px-3">
+            <i class="bi bi-arrow-left me-1"></i> Quay lại danh sách
+        </a>
+    </div>
+
+    <div class="card shadow-sm border-0 rounded-3 overflow-hidden">
+        <div class="card-header bg-primary text-white py-3">
+            <h5 class="mb-0 fw-semibold d-flex align-items-center">
+                <i class="bi bi-info-circle-fill me-2"></i> Bảng Thông Tin Chi Tiết Sản Phẩm
+            </h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col" class="py-3 px-4" style="width: 25%;">Thuộc tính</th>
+                            <th scope="col" class="py-3 px-4" style="width: 55%;">Thông tin chi tiết</th>
+                            <th scope="col" class="py-3 px-4 text-center" style="width: 20%;">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="fw-bold px-4 text-secondary">Mã sản phẩm (ID)</td>
+                            <td class="px-4 text-dark font-monospace">#@Model.Id</td>
+                            <td rowspan="16" class="text-center align-middle bg-light border-start">
+                                <div class="px-3 py-4">
+                                    <p class="text-muted small mb-3">Bạn muốn chỉnh sửa thông tin cho sản phẩm này?</p>
+                                    <button class="btn btn-warning btn-lg px-4 py-2.5 rounded-pill shadow-sm fw-semibold hover-transform text-dark border-0" data-bs-toggle="modal" data-bs-target="#editProductModal">
+                                        <i class="bi bi-pencil-square me-2"></i> Chỉnh sửa sản phẩm
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold px-4 text-secondary">Tên sản phẩm</td>
+                            <td class="px-4 fw-semibold text-primary fs-5">@Model.Name</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold px-4 text-secondary">Danh mục</td>
+                            <td class="px-4 text-dark">
+                                @if (Model.Category != null)
+                                {
+                                    <span class="badge bg-light text-dark border px-3 py-2 rounded-pill">
+                                        <i class="bi bi-folder-fill text-warning me-1"></i> @Model.Category.Name
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">Chưa có danh mục</span>
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold px-4 text-secondary">Thương hiệu</td>
+                            <td class="px-4 text-dark">
+                                @if (Model.Brand != null)
+                                {
+                                    <span class="badge bg-light text-dark border px-3 py-2 rounded-pill">
+                                        <i class="bi bi-tag-fill text-info me-1"></i> @Model.Brand.BrandName
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">Chưa có thương hiệu</span>
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold px-4 text-secondary">Giá nhập</td>
+                            <td class="px-4 text-danger fw-semibold">
+                                @(Model.ImportPrice.HasValue ? Model.ImportPrice.Value.ToString("N0") + " ₫" : "Chưa cập nhật")
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold px-4 text-secondary">Giá bán</td>
+                            <td class="px-4 text-success fw-bold fs-5">
+                                @(Model.SalePrice.HasValue ? Model.SalePrice.Value.ToString("N0") + " ₫" : "Chưa cập nhật")
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold px-4 text-secondary">Giá gốc</td>
+                            <td class="px-4 text-muted text-decoration-line-through">
+                                @(Model.OriginalPrice.HasValue ? Model.OriginalPrice.Value.ToString("N0") + " ₫" : "Chưa cập nhật")
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold px-4 text-secondary">Quốc gia sản xuất</td>
+                            <td class="px-4 text-dark">
+                                @(Model.MadeInNavigation?.Country1 ?? "Chưa cập nhật")
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold px-4 text-secondary">Số lượng tồn kho</td>
+                            <td class="px-4 text-dark fw-semibold">
+                                <span class="@(Model.StockQuantity > 10 ? "text-dark" : "text-danger")">
+                                    @Model.StockQuantity chiếc
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold px-4 text-secondary">Số lượng đã bán</td>
+                            <td class="px-4 text-dark">
+                                @(Model.SaleCount ?? 0) chiếc
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold px-4 text-secondary">Đánh giá trung bình</td>
+                            <td class="px-4 text-dark">
+                                @if (Model.Rating.HasValue)
+                                {
+                                    <span class="text-warning fw-bold">
+                                        @Model.Rating.Value.ToString("0.0") <i class="bi bi-star-fill"></i>
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">Chưa có đánh giá</span>
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold px-4 text-secondary">Trạng thái hoạt động</td>
+                            <td class="px-4">
+                                @if (Model.IsActive == true)
+                                {
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill">
+                                        <i class="bi bi-check-circle-fill me-1"></i> Đang kinh doanh
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-3 py-2 rounded-pill">
+                                        <i class="bi bi-x-circle-fill me-1"></i> Tạm dừng
+                                    </span>
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold px-4 text-secondary">Nhà cung cấp</td>
+                            <td class="px-4 text-dark">
+                                @(Model.Supplier?.Name ?? "Chưa có thông tin")
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold px-4 text-secondary">Trả góp</td>
+                            <td class="px-4 text-dark">
+                                @(string.IsNullOrEmpty(Model.InstallmentTag) ? "Không áp dụng" : Model.InstallmentTag)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold px-4 text-secondary">Quà tặng kèm</td>
+                            <td class="px-4 text-dark">
+                                @(string.IsNullOrEmpty(Model.Gift) ? "Không có quà tặng" : Model.Gift)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold px-4 text-secondary text-wrap">Mô tả sản phẩm</td>
+                            <td class="px-4 text-muted py-3 text-wrap" style="max-height: 200px; overflow-y: auto; line-height: 1.6;">
+                                @if (!string.IsNullOrEmpty(Model.Description))
+                                {
+                                    @Html.Raw(Model.Description.Replace("\n", "<br/>"))
+                                }
+                                else
+                                {
+                                    <span>Không có mô tả sản phẩm.</span>
+                                }
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Chỉnh Sửa Sản Phẩm (Bootstrap 5) -->
+<div class="modal fade" id="editProductModal" tabindex="-1" aria-labelledby="editProductModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-3">
+            <div class="modal-header bg-warning text-dark py-3">
+                <h5 class="modal-title fw-bold d-flex align-items-center" id="editProductModalLabel">
+                    <i class="bi bi-pencil-square me-2"></i> Chỉnh Sửa Thông Tin Sản Phẩm
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-area="Admin" asp-controller="Product" asp-action="Edit" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="Id" value="@Model.Id" />
+
+                <div class="modal-body p-4">
+                    <!-- Row 1: Name -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-secondary">Tên sản phẩm <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control border-secondary-subtle py-2 px-3 focus-ring" name="Name" value="@Model.Name" required placeholder="Nhập tên sản phẩm..." />
+                    </div>
+
+                    <div class="row">
+                        <!-- Row 2 Column 1: Category -->
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold text-secondary">Danh mục</label>
+                            <select class="form-select border-secondary-subtle py-2 focus-ring" name="CategoryId">
+                                <option value="">-- Chọn danh mục --</option>
+                                @foreach (var cat in categories)
+                                {
+                                    if (Model.CategoryId == cat.Id)
+                                    {
+                                        <option value="@cat.Id" selected>@cat.Name</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@cat.Id">@cat.Name</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+
+                        <!-- Row 2 Column 2: Brand -->
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold text-secondary">Thương hiệu</label>
+                            <select class="form-select border-secondary-subtle py-2 focus-ring" name="BrandId">
+                                <option value="">-- Chọn thương hiệu --</option>
+                                @foreach (var brand in brands)
+                                {
+                                    if (Model.BrandId == brand.Id)
+                                    {
+                                        <option value="@brand.Id" selected>@brand.BrandName</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@brand.Id">@brand.BrandName</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <!-- Row 3 Column 1: Made In -->
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold text-secondary">Quốc gia sản xuất</label>
+                            <select class="form-select border-secondary-subtle py-2 focus-ring" name="MadeIn">
+                                <option value="">-- Chọn quốc gia --</option>
+                                @foreach (var country in countries)
+                                {
+                                    if (Model.MadeIn == country.Id)
+                                    {
+                                        <option value="@country.Id" selected>@country.Country1</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@country.Id">@country.Country1</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+
+                        <!-- Row 3 Column 2: Supplier -->
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold text-secondary">Nhà cung cấp</label>
+                            <select class="form-select border-secondary-subtle py-2 focus-ring" name="SupplierId">
+                                <option value="">-- Chọn nhà cung cấp --</option>
+                                @foreach (var supplier in suppliers)
+                                {
+                                    if (Model.SupplierId == supplier.Id)
+                                    {
+                                        <option value="@supplier.Id" selected>@supplier.Name</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@supplier.Id">@supplier.Name</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <!-- Row 4 Column 1: Import Price -->
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label fw-semibold text-secondary">Giá nhập (₫)</label>
+                            <input type="number" class="form-control border-secondary-subtle py-2 focus-ring" name="ImportPrice" value="@Model.ImportPrice" min="0" step="any" placeholder="0" />
+                        </div>
+
+                        <!-- Row 4 Column 2: Sale Price -->
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label fw-semibold text-secondary">Giá bán (₫)</label>
+                            <input type="number" class="form-control border-secondary-subtle py-2 focus-ring" name="SalePrice" value="@Model.SalePrice" min="0" step="any" placeholder="0" />
+                        </div>
+
+                        <!-- Row 4 Column 3: Original Price -->
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label fw-semibold text-secondary">Giá gốc (₫)</label>
+                            <input type="number" class="form-control border-secondary-subtle py-2 focus-ring" name="OriginalPrice" value="@Model.OriginalPrice" min="0" step="any" placeholder="0" />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <!-- Row 5 Column 1: Stock Quantity -->
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label fw-semibold text-secondary">Số lượng tồn kho</label>
+                            <input type="number" class="form-control border-secondary-subtle py-2 focus-ring" name="StockQuantity" value="@Model.StockQuantity" min="0" placeholder="0" />
+                        </div>
+
+                        <!-- Row 5 Column 2: Installment Tag -->
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label fw-semibold text-secondary">Trả góp</label>
+                            <input type="text" class="form-control border-secondary-subtle py-2 focus-ring" name="InstallmentTag" value="@Model.InstallmentTag" placeholder="Ví dụ: Trả góp 0%..." />
+                        </div>
+
+                        <!-- Row 5 Column 3: Status -->
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label fw-semibold text-secondary">Trạng thái kinh doanh</label>
+                            <select class="form-select border-secondary-subtle py-2 focus-ring" name="IsActive">
+                                <option value="true" selected="@(Model.IsActive == true ? "selected" : null)">Kinh doanh (Active)</option>
+                                <option value="false" selected="@(Model.IsActive == false ? "selected" : null)">Tạm ngưng (Inactive)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Row 6: Gift -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-secondary">Quà tặng kèm</label>
+                        <input type="text" class="form-control border-secondary-subtle py-2 focus-ring" name="Gift" value="@Model.Gift" placeholder="Ví dụ: Chuột không dây, Bao da..." />
+                    </div>
+
+                    <!-- Row 7: Description -->
+                    <div class="mb-0">
+                        <label class="form-label fw-semibold text-secondary">Mô tả sản phẩm</label>
+                        <textarea class="form-control border-secondary-subtle py-2 focus-ring" name="Description" rows="4" placeholder="Nhập mô tả sản phẩm...">@Model.Description</textarea>
+                    </div>
+                </div>
+
+                <div class="modal-footer bg-light p-3 border-top d-flex justify-content-end gap-2">
+                    <button type="button" class="btn btn-outline-secondary rounded-pill px-4 py-2 fw-medium" data-bs-dismiss="modal">Hủy bỏ</button>
+                    <button type="submit" class="btn btn-warning rounded-pill px-4 py-2 fw-semibold text-dark shadow-sm">
+                        <i class="bi bi-save me-1"></i> Lưu thay đổi
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .hover-transform {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .hover-transform:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    }
+    .focus-ring:focus {
+        border-color: #ffc107 !important;
+        box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.25) !important;
+    }
+</style>

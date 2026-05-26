@@ -1,4 +1,4 @@
-﻿using ElectricStore_Project.Models;
+using ElectricStore_Project.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace ElectricStore_Project.Repositories.Products
@@ -13,7 +13,12 @@ namespace ElectricStore_Project.Repositories.Products
         }
         public async Task<IEnumerable<ElectricStore_Project.Models.Product>> GetAllProductsAsync()
         {
-            return await _context.Products.ToListAsync();
+            return await _context.Products
+                .Include(p => p.Brand)
+                .Include(p => p.Category)
+                .Include(p => p.Supplier)
+                .Include(p => p.MadeInNavigation)
+                .ToListAsync();
         }
 
         public async Task<ElectricStore_Project.Models.Product> GetProductByIdAsync(int id)

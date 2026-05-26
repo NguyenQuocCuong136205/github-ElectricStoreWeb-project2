@@ -1,20 +1,5 @@
-﻿@inject ElectricStore_Project.Models.ElectronicStoreContext _dbContext
-@{
-    List<ElectricStore_Project.Models.Category> dbCategories = new List<ElectricStore_Project.Models.Category>();
-    try
-    {
-        dbCategories = _dbContext.Categories.ToList();
-    }
-    catch (Exception)
-    {
-        // Fail-safe mock categories in case the database is not initialized yet or is offline
-        dbCategories = new List<ElectricStore_Project.Models.Category>
-        {
-            new ElectricStore_Project.Models.Category { Id = 1, Name = "Điện thoại" },
-            new ElectricStore_Project.Models.Category { Id = 2, Name = "Máy tính" }
-        };
-    }
-}
+@inject ElectricStore_Project.Models.ElectronicStoreContext _dbContext
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -87,9 +72,9 @@
                     </a>
 
                     <!-- Long Search Bar -->
-                    <form class="d-flex flex-grow-1 mx-md-4 my-2 my-md-0" action="/" method="get" style="max-width: 720px;">
+                    <form class="d-flex flex-grow-1 mx-md-4 my-2 my-md-0" method="get" action="@Url.Action("Search", "Product", new { area = "" })" style="max-width: 720px;">
                         <div class="input-group search-group w-100">
-                            <input type="text" name="query" class="form-control border-0 px-3 py-2.5" placeholder="Tìm kiếm sản phẩm trên ElectriStore..." aria-label="Search" value="@ViewData["SearchQuery"]" style="box-shadow: none; outline: none; font-size: 14.5px;">
+                            <input type="text" name="keyword" class="form-control border-0 px-3 py-2.5" placeholder="Tìm kiếm sản phẩm trên ElectriStore..." aria-label="Search" value="@ViewData["SearchQuery"]" style="box-shadow: none; outline: none; font-size: 14.5px;">
                             <button class="btn btn-primary border-0 px-4 d-flex align-items-center justify-content-center" type="submit" style="background-color: #0d6efd; border-radius: 0; transition: background-color 0.2s;">
                                 <i class="bi bi-search text-white fs-5"></i>
                             </button>
@@ -126,61 +111,6 @@
                         }
                     </div>
                 </div>
-
-                <!-- ROW 2: Dynamic Database-Driven Categories and Store Links -->
-                <div class="d-flex align-items-center justify-content-between border-top pt-2 mt-2 flex-wrap gap-2">
-
-                    <!-- Category quick links container -->
-                    <div class="d-flex align-items-center gap-3 flex-wrap">
-                        <span class="text-secondary small fw-bold text-uppercase me-1" style="letter-spacing: 0.5px; font-size: 11px;">Danh mục:</span>
-
-                        @foreach (var cat in dbCategories)
-                        {
-                            var catName = cat.Name ?? "Danh mục";
-                            string imgUrl = "https://cdn-icons-png.flaticon.com/512/709/709612.png"; // default icon
-
-                            // Dynamically map corresponding images based on case-insensitive matches
-                            if (catName.Contains("điện thoại", StringComparison.OrdinalIgnoreCase) || catName.Contains("phone", StringComparison.OrdinalIgnoreCase))
-                            {
-                                imgUrl = "https://cdn-icons-png.flaticon.com/512/3616/3616215.png";
-                            }
-                            else if (catName.Contains("máy tính", StringComparison.OrdinalIgnoreCase) || catName.Contains("computer", StringComparison.OrdinalIgnoreCase) || catName.Contains("laptop", StringComparison.OrdinalIgnoreCase))
-                            {
-                                imgUrl = "https://cdn-icons-png.flaticon.com/512/3030/3030336.png";
-                            }
-                            else if (catName.Contains("máy ảnh", StringComparison.OrdinalIgnoreCase) || catName.Contains("camera", StringComparison.OrdinalIgnoreCase))
-                            {
-                                imgUrl = "https://cdn-icons-png.flaticon.com/512/3004/3004613.png";
-                            }
-                            else if (catName.Contains("tai nghe", StringComparison.OrdinalIgnoreCase) || catName.Contains("headphone", StringComparison.OrdinalIgnoreCase))
-                            {
-                                imgUrl = "https://cdn-icons-png.flaticon.com/512/1211/1211463.png";
-                            }
-                            else if (catName.Contains("đồng hồ", StringComparison.OrdinalIgnoreCase) || catName.Contains("watch", StringComparison.OrdinalIgnoreCase))
-                            {
-                                imgUrl = "https://cdn-icons-png.flaticon.com/512/3103/3103138.png";
-                            }
-                            else if (catName.Contains("phụ kiện", StringComparison.OrdinalIgnoreCase) || catName.Contains("accessory", StringComparison.OrdinalIgnoreCase))
-                            {
-                                imgUrl = "https://cdn-icons-png.flaticon.com/512/3067/3067260.png";
-                            }
-
-                            <a href="/?query=@(System.Net.WebUtility.UrlEncode(catName))" class="category-item-link px-3 py-1.5 rounded-pill border-0 d-flex align-items-center gap-2 fw-semibold text-decoration-none shadow-sm">
-                                <img src="@imgUrl" alt="@catName" style="width: 18px; height: 18px; object-fit: contain;" />
-                                <span>@catName</span>
-                            </a>
-                        }
-                    </div>
-
-                    @* <div class="d-flex align-items-center gap-3 small text-secondary fw-medium">
-                                <a asp-controller="Home" asp-action="Privacy" class="text-secondary text-decoration-none hover-primary">
-                                    <i class="bi bi-shield-check me-1"></i>Chính sách bảo mật
-                                </a>
-                                <span class="text-muted">|</span>
-                                <span><i class="bi bi-telephone-fill me-1 text-success"></i>Hotline: 1800.1060</span>
-                            </div> *@
-                </div>
-
             </div>
         </nav>
     </header>

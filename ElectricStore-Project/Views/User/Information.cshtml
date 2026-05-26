@@ -1,4 +1,4 @@
-@model ElectricStore_Project.Models.User
+@model ElectricStore_Project.DTOs.Customers.ShowableCustomerInfor
 
 @{
     ViewData["Title"] = "Thông tin tài khoản - ElectriStore";
@@ -193,13 +193,13 @@
                 <div class="sidebar-card">
                     <!-- User name -->
                     <div class="px-2 mb-3">
-                        <span class="user-name-title">Anh @Model.FullName</span>
+                        <span class="user-name-title">Anh @Model.UserName</span>
                     </div>
 
                     <!-- Navigation menu -->
                     <div class="menu-list">
                         <!-- 1. Đơn hàng đã mua (Active: Xanh lá, Không active ở trang này) -->
-                        <a href="#" class="menu-item btn-green">
+                        <a asp-area="" asp-controller="User" asp-action="PurchasedOrders" class="menu-item btn-green">
                             <i class="bi bi-box-seam"></i>
                             Đơn hàng đã mua
                         </a>
@@ -232,10 +232,12 @@
                 <div class="info-card">
                     <div class="card-sec-title">Thông tin cá nhân</div>
                     <div class="d-flex align-items-center flex-wrap fs-6 white-space: pre-line;">
-                        <span class="fw-medium text-dark">Tên: @Model.FullName</span>
-                        <span class="fw-medium text-dark">Email: @Model.Email</span>
-                        <span class="fw-medium text-dark">Số điện thoại: @Model.Phone</span>
-                        <span class="fw-medium text-dark">Ngày tạo tài khoản: @Model.CreateAt</span>
+                        <ul>
+                            <li class="fw-medium text-dark">Tên: @Model.UserName</li>
+                            <li class="fw-medium text-dark">Email: @Model.UserEmail</li>
+                            <li class="fw-medium text-dark">Số điện thoại: @Model.UserPhoneNumber</li>
+                            <li class="fw-medium text-dark">Ngày tạo tài khoản: @Model.CreatedDate</li>
+                        </ul>
                         @* <a href="#" class="edit-link ms-3">
                             <i class="bi bi-pencil"></i> Sửa
                         </a> *@
@@ -245,25 +247,31 @@
                 <!-- Card 2: ĐỊA CHỈ NHẬN HÀNG -->
                 <div class="info-card">
                     <div class="card-sec-title">Địa chỉ nhận hàng</div>
-                    
-                    @if (Model.Addresses != null && Model.Addresses.Any())
+                    @if (Model.Address != null && Model.Address.Any())
                     {
                         <div class="mb-4">
-                            @foreach (var addr in Model.Addresses)
+                            @foreach (var addr in Model.Address)
                             {
-                                <div class="address-item d-flex justify-content-between align-items-center">
+                                <div class="address-item d-flex justify-content-between align-items-center py-3">
                                     <div class="d-flex align-items-start">
                                         <i class="bi bi-geo-alt-fill text-danger me-2 mt-1"></i>
-                                        <span class="text-dark">@addr.FullAddress</span>
+                                        <span class="text-dark" id="addressText-@addr.Id">@addr.Address</span>
                                     </div>
-                                    <a href="#" class="text-secondary text-decoration-none small hover-underline ms-3">Xóa</a>
+                                    <div class="d-flex gap-2">
+                                        <button class="btn btn-sm btn-outline-primary btn-edit-address-trigger" data-id="@addr.Id" data-address="@addr.Address" style="border-radius: 6px; font-size: 0.85rem; padding: 4px 10px;">
+                                            <i class="bi bi-pencil me-1"></i> Sửa
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger btn-delete-address-trigger" data-id="@addr.Id" style="border-radius: 6px; font-size: 0.85rem; padding: 4px 10px;">
+                                            <i class="bi bi-trash me-1"></i> Xóa
+                                        </button>
+                                    </div>
                                 </div>
                             }
                         </div>
                     }
                     
                     <div class="text-center py-3">
-                        <button class="btn-add-address">Thêm địa chỉ mới</button>
+                        <button class="btn-add-address" data-bs-toggle="modal" data-bs-target="#addAddressModal">Thêm địa chỉ mới</button>
                     </div>
                 </div>
 
@@ -272,7 +280,233 @@
         </div>
     </div>
 
+    <!-- Modal Thêm địa chỉ mới -->
+    <div class="modal fade" id="addAddressModal" tabindex="-1" aria-labelledby="addAddressModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 12px;">
+                <div class="modal-header bg-light border-bottom-0 pb-0" style="border-top-left-radius: 12px; border-top-right-radius: 12px;">
+                    <h5 class="modal-title fw-bold text-dark" id="addAddressModalLabel">
+                        <i class="bi bi-geo-alt-fill text-danger me-2"></i>Thêm địa chỉ mới
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body py-4">
+                    <form id="addAddressForm">
+                        <input type="hidden" id="userId" value="@Model.Id" />
+                        <div class="mb-3">
+                            <label for="newAddressInput" class="form-label fw-semibold text-secondary">Địa chỉ nhận hàng</label>
+                            <textarea class="form-control border-2" id="newAddressInput" rows="3" placeholder="Nhập số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành phố..." required style="border-color: #e0e0e0; resize: none; border-radius: 8px;"></textarea>
+                            <div class="invalid-feedback">
+                                Vui lòng nhập địa chỉ nhận hàng hợp lệ.
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-top-0 pt-0">
+                    <button type="button" class="btn btn-outline-secondary px-4 py-2" data-bs-dismiss="modal" style="border-radius: 8px; font-weight: 600;">Hủy</button>
+                    <button type="button" id="btnSaveAddress" class="btn px-4 py-2 text-white" style="background-color: #ff5722; border-radius: 8px; font-weight: 600; border: none; transition: background-color 0.2s;">
+                        Lưu địa chỉ
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Chỉnh sửa địa chỉ -->
+    <div class="modal fade" id="editAddressModal" tabindex="-1" aria-labelledby="editAddressModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 12px;">
+                <div class="modal-header bg-light border-bottom-0 pb-0" style="border-top-left-radius: 12px; border-top-right-radius: 12px;">
+                    <h5 class="modal-title fw-bold text-dark" id="editAddressModalLabel">
+                        <i class="bi bi-pencil-square text-primary me-2"></i>Chỉnh sửa địa chỉ
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body py-4">
+                    <form id="editAddressForm">
+                        <input type="hidden" id="editAddressId" />
+                        <div class="mb-3">
+                            <label for="editAddressInput" class="form-label fw-semibold text-secondary">Địa chỉ nhận hàng</label>
+                            <textarea class="form-control border-2" id="editAddressInput" rows="3" placeholder="Nhập địa chỉ mới..." required style="border-color: #e0e0e0; resize: none; border-radius: 8px;"></textarea>
+                            <div class="invalid-feedback">
+                                Vui lòng nhập địa chỉ nhận hàng hợp lệ.
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-top-0 pt-0">
+                    <button type="button" class="btn btn-outline-secondary px-4 py-2" data-bs-dismiss="modal" style="border-radius: 8px; font-weight: 600;">Hủy</button>
+                    <button type="button" id="btnUpdateAddress" class="btn px-4 py-2 text-white btn-primary" style="border-radius: 8px; font-weight: 600; border: none; transition: background-color 0.2s;">
+                        Cập nhật
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Bootstrap JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+    <!-- AJAX Script for Adding Address via Modal -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // === XỬ LÝ THÊM ĐỊA CHỈ MỚI ===
+            const btnSaveAddress = document.getElementById("btnSaveAddress");
+            const newAddressInput = document.getElementById("newAddressInput");
+            const userId = document.getElementById("userId").value;
+            const addAddressModalEl = document.getElementById('addAddressModal');
+            const addAddressModal = new bootstrap.Modal(addAddressModalEl);
+
+            btnSaveAddress.addEventListener("click", async function () {
+                const addressVal = newAddressInput.value.trim();
+                if (!addressVal) {
+                    newAddressInput.classList.add("is-invalid");
+                    return;
+                }
+                newAddressInput.classList.remove("is-invalid");
+
+                btnSaveAddress.disabled = true;
+                btnSaveAddress.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Đang lưu...';
+
+                try {
+                    const response = await fetch('/Address/CreateNewAddress', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            userID: parseInt(userId),
+                            newAddress: addressVal
+                        })
+                    });
+
+                    const result = await response.json();
+                    if (result.success) {
+                        addAddressModal.hide();
+                        alert(result.message || "Thêm địa chỉ mới thành công!");
+                        location.reload();
+                    } else {
+                        alert(result.message || "Đã xảy ra lỗi khi thêm địa chỉ.");
+                    }
+                } catch (error) {
+                    console.error("Lỗi AJAX thêm địa chỉ:", error);
+                    alert("Không thể kết nối đến máy chủ. Vui lòng thử lại sau.");
+                } finally {
+                    btnSaveAddress.disabled = false;
+                    btnSaveAddress.innerText = 'Lưu địa chỉ';
+                }
+            });
+
+            addAddressModalEl.addEventListener('hidden.bs.modal', function () {
+                newAddressInput.value = '';
+                newAddressInput.classList.remove("is-invalid");
+            });
+
+            // === XỬ LÝ SỬA ĐỊA CHỈ ===
+            const editAddressModalEl = document.getElementById('editAddressModal');
+            const editAddressModal = new bootstrap.Modal(editAddressModalEl);
+            const editAddressId = document.getElementById("editAddressId");
+            const editAddressInput = document.getElementById("editAddressInput");
+            const btnUpdateAddress = document.getElementById("btnUpdateAddress");
+
+            // Mở modal sửa địa chỉ khi click nút Sửa
+            document.querySelectorAll(".btn-edit-address-trigger").forEach(button => {
+                button.addEventListener("click", function () {
+                    const id = this.getAttribute("data-id");
+                    const address = this.getAttribute("data-address");
+
+                    editAddressId.value = id;
+                    editAddressInput.value = address;
+                    editAddressInput.classList.remove("is-invalid");
+
+                    editAddressModal.show();
+                });
+            });
+
+            // Gửi dữ liệu cập nhật
+            btnUpdateAddress.addEventListener("click", async function () {
+                const addressVal = editAddressInput.value.trim();
+                const addressId = editAddressId.value;
+
+                if (!addressVal) {
+                    editAddressInput.classList.add("is-invalid");
+                    return;
+                }
+                editAddressInput.classList.remove("is-invalid");
+
+                btnUpdateAddress.disabled = true;
+                btnUpdateAddress.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Đang cập nhật...';
+
+                try {
+                    const response = await fetch('/Address/UpdateAddress', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            addressID: parseInt(addressId),
+                            userID: parseInt(userId),
+                            updatedAddress: addressVal
+                        })
+                    });
+
+                    const result = await response.json();
+                    if (result.success) {
+                        editAddressModal.hide();
+                        alert(result.message || "Cập nhật địa chỉ thành công!");
+                        location.reload();
+                    } else {
+                        alert(result.message || "Đã xảy ra lỗi khi cập nhật địa chỉ.");
+                    }
+                } catch (error) {
+                    console.error("Lỗi AJAX cập nhật địa chỉ:", error);
+                    alert("Không thể kết nối đến máy chủ. Vui lòng thử lại sau.");
+                } finally {
+                    btnUpdateAddress.disabled = false;
+                    btnUpdateAddress.innerText = 'Cập nhật';
+                }
+            });
+
+            // === XỬ LÝ XÓA ĐỊA CHỈ ===
+            document.querySelectorAll(".btn-delete-address-trigger").forEach(button => {
+                button.addEventListener("click", async function () {
+                    const addressId = this.getAttribute("data-id");
+
+                    if (!confirm("Bạn có chắc chắn muốn xóa địa chỉ này? Thao tác này không thể hoàn tác.")) {
+                        return;
+                    }
+
+                    // Vô hiệu hóa nút để tránh gửi yêu cầu liên tục
+                    this.disabled = true;
+
+                    try {
+                        const response = await fetch('/Address/DeleteAddress', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                addressID: parseInt(addressId),
+                                userID: parseInt(userId)
+                            })
+                        });
+
+                        const result = await response.json();
+                        if (result.success) {
+                            alert(result.message || "Xóa địa chỉ thành công!");
+                            location.reload();
+                        } else {
+                            alert(result.message || "Đã xảy ra lỗi khi xóa địa chỉ.");
+                            this.disabled = false;
+                        }
+                    } catch (error) {
+                        console.error("Lỗi AJAX xóa địa chỉ:", error);
+                        alert("Không thể kết nối đến máy chủ. Vui lòng thử lại sau.");
+                        this.disabled = false;
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
