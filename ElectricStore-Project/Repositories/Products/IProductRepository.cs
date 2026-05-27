@@ -1,4 +1,4 @@
-﻿using ElectricStore_Project.Models;
+using ElectricStore_Project.Models;
 
 namespace ElectricStore_Project.Repositories.Products
 {
@@ -6,7 +6,7 @@ namespace ElectricStore_Project.Repositories.Products
     {
         Task<IEnumerable<ElectricStore_Project.Models.Product>> GetAllProductsAsync();
 
-        Task<ElectricStore_Project.Models.Product> GetProductByIdAsync(int id);
+        Task<ElectricStore_Project.Models.Product?> GetProductByIdAsync(int id);
 
         Task<IEnumerable<ElectricStore_Project.Models.Product>> GetAllProductByKeyworkAsync(string keywork);
     }

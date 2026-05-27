@@ -5,11 +5,13 @@ namespace ElectricStore_Project.DTOs.Products
     public class ProductDisplayDTO
     {
         // get all infor of product which admin want to show
+        public int Id { get; set; }
         public string Name { get; set; }
         public string Brand { get; set; }
         public string Category { get; set; }
         public decimal OriginalPrice {  get; set; }
         public decimal SalePrice { get; set; }
+        public string ImageUrl { get; set; }
         //public decimal imporetprice { get; set; }
         public int StockQuantity { get; set; }
         public string SupplierName { get; set; }

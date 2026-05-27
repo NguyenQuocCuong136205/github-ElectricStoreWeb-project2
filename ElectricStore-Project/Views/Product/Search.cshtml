@@ -1,4 +1,4 @@
-﻿@model List<ElectricStore_Project.DTOs.Products.ProductDisplayDTO>
+@model List<ElectricStore_Project.DTOs.Products.ProductDisplayDTO>
 
 @{
     ViewData["Title"] = "Điện máy ElectriStore - Sản phẩm được tìm thấy:";
@@ -214,140 +214,146 @@
         </div>
     </div>
 
-        <!-- MAIN PRODUCT SECTION: Gợi ý cho bạn -->
-        <div class="row mb-3">
-            <div class="col-12">
+    <!-- MAIN PRODUCT SECTION: Gợi ý cho bạn -->
+    <div class="row mb-3">
+        <div class="col-12">
             <h2 class="home-section-title">"Các Sản phẩm tìm thấy"</h2>
-            </div>
         </div>
+    </div>
 
-        <!-- Responsive Grid Layout (4 columns on Desktop, 2 columns on Mobile) -->
-        <div class="row row-cols-2 row-cols-md-4 g-3 g-md-4" id="product-grid">
-            @for (int i = 0; i < Model.Count; i++)
-            {
-                var product = Model[i];
-                var isHidden = ViewData["SearchQuery"] == null && i >= 8; // Only hide items starting from index 8 if not searching
+    <!-- Responsive Grid Layout (4 columns on Desktop, 2 columns on Mobile) -->
+    <div class="row row-cols-2 row-cols-md-4 g-3 g-md-4" id="product-grid">
+        @for (int i = 0; i < Model.Count; i++)
+        {
+            var product = Model[i];
+            var isHidden = ViewData["SearchQuery"] == null && i >= 8; // Only hide items starting from index 8 if not searching
 
-                <div class="col product-card-wrapper @(isHidden ? "d-none" : "")" data-index="@i">
-                    <div class="product-card p-3">
-                        <div class="w-100 position-relative">
-                            <!-- Installment Tag -->
-                            @if (!string.IsNullOrEmpty(product.IstallmentTag))
-                            {
-                                <span class="installment-badge">@product.IstallmentTag</span>
-                            }
+            <div class="col product-card-wrapper @(isHidden ? "d-none" : "")" data-index="@i">
+                <div class="product-card p-3">
+                    <div class="w-100 position-relative">
+                        <!-- Installment Tag -->
+                        @if (!string.IsNullOrEmpty(product.IstallmentTag))
+                        {
+                            <span class="installment-badge">@product.IstallmentTag</span>
+                        }
 
-                            <!-- Sharp Product Image Container -->
-                            <div class="img-container rounded-3 mb-3">
-                                <img src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&q=80&w=400" alt="@product.Name" loading="lazy" />
-                            </div>
+                        <!-- Sharp Product Image Container -->
+                        <div class="img-container rounded-3 mb-3">
+                            <img src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&q=80&w=400" alt="@product.Name" loading="lazy" />
+                        </div>
 
-                            <!-- Config Specification Badge -->
-                            @* @if (!string.IsNullOrEmpty(product.spec))
+                        <!-- Config Specification Badge -->
+                        @* @if (!string.IsNullOrEmpty(product.spec))
                             {
                                 <span class="specs-badge">@product.Specifications</span>
                             } *@
 
-                            <!-- Clickable Title -->
-                            <a href="#" class="product-name-title d-block" title="@product.Name">@product.Name</a>
+                        <!-- Clickable Title -->
+                        <a asp-controller="Product"
+                           asp-action="Details"
+                           asp-route-id="@product.Id"
+                           class="product-name-title d-block"
+                           title="@product.Name">
+                            @product.Name
+                        </a>
 
-                            <!-- Pricing Row -->
-                            <div class="d-flex align-items-baseline flex-wrap">
-                                <span class="price-promo">@product.SalePrice.ToString("N0")₫</span>
-                                @if (product.OriginalPrice > product.SalePrice)
-                                {
-                                    <span class="price-original">@product.OriginalPrice.ToString("N0")₫</span>
-                                }
-                            </div>
-
-                            <!-- Premium Free Gift Badge -->
-                            @if (!string.IsNullOrEmpty(product.GiftInfo))
+                        <!-- Pricing Row -->
+                        <div class="d-flex align-items-baseline flex-wrap">
+                            <span class="price-promo">@product.SalePrice.ToString("N0")₫</span>
+                            @if (product.OriginalPrice > product.SalePrice)
                             {
-                                <div class="gift-box">
-                                    <i class="bi bi-gift-fill text-success"></i>
-                                    <span class="text-truncate" title="@product.GiftInfo">@product.GiftInfo</span>
-                                </div>
+                                <span class="price-original">@product.OriginalPrice.ToString("N0")₫</span>
                             }
                         </div>
 
-                        <!-- Bottom Stars & Sales Review Block -->
-                        <div class="review-line mt-auto">
-                            <span class="fw-semibold">@product.Rating</span>
-                            <i class="bi bi-star-fill star-icon"></i>
-                            <span class="divider">|</span>
-                            <span>Đã bán @product.SalceCount</span>
-                        </div>
+                        <!-- Premium Free Gift Badge -->
+                        @if (!string.IsNullOrEmpty(product.GiftInfo))
+                        {
+                            <div class="gift-box">
+                                <i class="bi bi-gift-fill text-success"></i>
+                                <span class="text-truncate" title="@product.GiftInfo">@product.GiftInfo</span>
+                            </div>
+                        }
                     </div>
-                </div>
-            }
-        </div>
 
-        <!-- Instant JavaScript Show-More Expansion Button -->
-        @if (ViewData["SearchQuery"] == null && Model.Count > 8)
-        {
-            <div class="row mt-5" id="btn-show-more-wrapper">
-                <div class="col-12 text-center">
-                    <button type="button" class="btn btn-show-more-custom shadow-sm" id="btn-show-more">
-                        Xem thêm <span class="fw-bold text-primary-emphasis">@(Model.Count - 8)</span> sản phẩm <i class="bi bi-chevron-down ms-1"></i>
-                    </button>
+                    <!-- Bottom Stars & Sales Review Block -->
+                    <div class="review-line mt-auto">
+                        <span class="fw-semibold">@product.Rating</span>
+                        <i class="bi bi-star-fill star-icon"></i>
+                        <span class="divider">|</span>
+                        <span>Đã bán @product.SalceCount</span>
+                    </div>
                 </div>
             </div>
         }
     </div>
 
-    <!-- SweetAlert2 Success & Error Toast Popup Notifications -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        const Toast = Swal.mixin({
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 3000, // Tự động ẩn sau 3 giây
-        timerProgressBar: true,
-        didOpen: (toast) => {
-        toast.addEventListener('mouseenter', Swal.stopTimer)
-        toast.addEventListener('mouseleave', Swal.resumeTimer)
-        }
-        });
+    <!-- Instant JavaScript Show-More Expansion Button -->
+    @if (ViewData["SearchQuery"] == null && Model.Count > 8)
+    {
+        <div class="row mt-5" id="btn-show-more-wrapper">
+            <div class="col-12 text-center">
+                <button type="button" class="btn btn-show-more-custom shadow-sm" id="btn-show-more">
+                    Xem thêm <span class="fw-bold text-primary-emphasis">@(Model.Count - 8)</span> sản phẩm <i class="bi bi-chevron-down ms-1"></i>
+                </button>
+            </div>
+        </div>
+    }
+</div>
 
-        // Kiểm tra xem Server có gửi TempData["SuccessMessage"] về không
-        @if (TempData["SuccessMessage"] != null)
-        {
-            <text>
-                Toast.fire({
-                icon: 'success',
-                title: '@TempData["SuccessMessage"]'
-                });
-            </text>
-        }
+<!-- SweetAlert2 Success & Error Toast Popup Notifications -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    const Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 3000, // Tự động ẩn sau 3 giây
+    timerProgressBar: true,
+    didOpen: (toast) => {
+    toast.addEventListener('mouseenter', Swal.stopTimer)
+    toast.addEventListener('mouseleave', Swal.resumeTimer)
+    }
+    });
 
-        // Kiểm tra xem Server có gửi TempData["ErrorMessage"] về không (nếu có dùng)
-        @if (TempData["ErrorMessage"] != null)
-        {
-            <text>
-                Toast.fire({
-                icon: 'error',
-                title: '@TempData["ErrorMessage"]'
-                });
-            </text>
-        }
+    // Kiểm tra xem Server có gửi TempData["SuccessMessage"] về không
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <text>
+            Toast.fire({
+            icon: 'success',
+            title: '@TempData["SuccessMessage"]'
+            });
+        </text>
+    }
 
-        // Modern Vanilla JavaScript toggle show-more logic (Fast, flat, no distracting heavy animations)
-        document.getElementById('btn-show-more')?.addEventListener('click', function () {
-        // Find all hidden product wrappers
-        const hiddenProducts = document.querySelectorAll('#product-grid .product-card-wrapper.d-none');
+    // Kiểm tra xem Server có gửi TempData["ErrorMessage"] về không (nếu có dùng)
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <text>
+            Toast.fire({
+            icon: 'error',
+            title: '@TempData["ErrorMessage"]'
+            });
+        </text>
+    }
 
-        // Remove the display-none utility class instantly
-        hiddenProducts.forEach(el => {
-        el.classList.remove('d-none');
-        });
+    // Modern Vanilla JavaScript toggle show-more logic (Fast, flat, no distracting heavy animations)
+    document.getElementById('btn-show-more')?.addEventListener('click', function () {
+    // Find all hidden product wrappers
+    const hiddenProducts = document.querySelectorAll('#product-grid .product-card-wrapper.d-none');
 
-        // Hide the button wrapper completely
-        const btnWrapper = document.getElementById('btn-show-more-wrapper');
-        if (btnWrapper) {
-        btnWrapper.style.display = 'none';
-        }
-        });
-    </script>
+    // Remove the display-none utility class instantly
+    hiddenProducts.forEach(el => {
+    el.classList.remove('d-none');
+    });
+
+    // Hide the button wrapper completely
+    const btnWrapper = document.getElementById('btn-show-more-wrapper');
+    if (btnWrapper) {
+    btnWrapper.style.display = 'none';
+    }
+    });
+</script>
 </body>
 </html>

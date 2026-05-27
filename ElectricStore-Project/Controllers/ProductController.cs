@@ -1,4 +1,4 @@
-﻿using ElectricStore_Project.Services.Products;
+using ElectricStore_Project.Services.Products;
 using ElectricStore_Project.DTOs.Products;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,9 +25,14 @@ namespace ElectricStore_Project.Controllers
             return View(searchResults);
         }
 
-        public IActionResult Details()
+        public async Task<IActionResult> Details(int id)
         {
-            return View();
+            var product = await productService.GetProductByIdAsync(id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+            return View(product);
         }
     }
 }

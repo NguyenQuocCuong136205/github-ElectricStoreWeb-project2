@@ -21,9 +21,14 @@ namespace ElectricStore_Project.Repositories.Products
                 .ToListAsync();
         }
 
-        public async Task<ElectricStore_Project.Models.Product> GetProductByIdAsync(int id)
+        public async Task<ElectricStore_Project.Models.Product?> GetProductByIdAsync(int id)
         {
-            return await _context.Products.FindAsync(id);
+            return await _context.Products
+                .Include(p => p.Brand)
+                .Include(p => p.Category)
+                .Include(p => p.ProductImages)
+                .Include(p => p.MadeInNavigation)
+                .FirstOrDefaultAsync(p => p.Id == id);
         }
 
         public async Task<IEnumerable<ElectricStore_Project.Models.Product>> GetAllProductByKeyworkAsync(string keywork)

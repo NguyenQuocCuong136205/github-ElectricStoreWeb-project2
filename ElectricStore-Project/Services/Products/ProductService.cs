@@ -28,6 +28,7 @@ namespace ElectricStore_Project.Services.Products
 
             var productList = products.Select(p => new ProductDisplayDTO
             {
+                Id = p.Id,
                 Name = p.Name ?? "",
                 Brand = p.Brand != null ? p.Brand.BrandName ?? "No Brand" : "No Brand",
                 Category = p.Category != null ? p.Category.Name ?? "No Category" : "No Category",
@@ -48,6 +49,7 @@ namespace ElectricStore_Project.Services.Products
 
             var productList = products.Select(p => new ProductDisplayDTO
             {
+                Id = p.Id,
                 Name = p.Name ?? "",
                 Brand = p.Brand != null ? p.Brand.BrandName ?? "No Brand" : "No Brand",
                 Category = p.Category != null ? p.Category.Name ?? "No Category" : "No Category",
@@ -61,6 +63,8 @@ namespace ElectricStore_Project.Services.Products
 
             return productList;
         }
+
+
 
 
         // used for show all information for admin
