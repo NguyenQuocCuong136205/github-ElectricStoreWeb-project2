@@ -12,7 +12,7 @@ public partial class Product
     public int? BrandId { get; set; }
 
     public string? Name { get; set; }
-
+    
     public decimal? SalePrice { get; set; }
 
     public decimal? ImportPrice { get; set; }

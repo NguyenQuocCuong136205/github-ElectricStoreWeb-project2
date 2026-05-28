@@ -17,7 +17,7 @@ namespace ElectricStore_Project.Repositories.Products
                 .Include(p => p.Brand)
                 .Include(p => p.Category)
                 .Include(p => p.Supplier)
-                .Include(p => p.MadeInNavigation)
+                .Include(p => p.MadeInNavigation) 
                 .ToListAsync();
         }
 
