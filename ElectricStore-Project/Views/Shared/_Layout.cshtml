@@ -185,16 +185,175 @@
         </nav>
     </header>
 
+    <!-- BODY -->
     <div class="container">
-        <main role="main" class="pb-3">
+        <main role="main" class="pb-4">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - ElectricStore_Project - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <!-- FOOTER -->
+    <footer class="bg-white border-top shadow-sm">
+
+        <div class="container py-5">
+
+            <!-- Top Footer -->
+            <div class="row gy-4">
+
+                <!-- Brand -->
+                <div class="col-lg-4 col-md-6">
+
+                    <h4 class="fw-bold text-primary d-flex align-items-center mb-3">
+                        <i class="bi bi-lightning-charge-fill me-2"></i>
+                        ElectriStore
+                    </h4>
+
+                    <p class="text-secondary small mb-3" style="line-height: 1.8;">
+                        ElectriStore cung cấp các sản phẩm công nghệ chính hãng với giá tốt,
+                        giao hàng nhanh và hỗ trợ khách hàng tận tâm.
+                    </p>
+
+                    <div class="d-flex gap-3">
+
+                        <a href="#" class="text-decoration-none text-secondary fs-5 hover-primary">
+                            <i class="bi bi-facebook"></i>
+                        </a>
+
+                        <a href="#" class="text-decoration-none text-secondary fs-5 hover-primary">
+                            <i class="bi bi-instagram"></i>
+                        </a>
+
+                        <a href="#" class="text-decoration-none text-secondary fs-5 hover-primary">
+                            <i class="bi bi-youtube"></i>
+                        </a>
+
+                        <a href="#" class="text-decoration-none text-secondary fs-5 hover-primary">
+                            <i class="bi bi-tiktok"></i>
+                        </a>
+
+                    </div>
+
+                </div>
+
+                <!-- Quick Links -->
+                <div class="col-lg-2 col-md-6">
+
+                    <h5 class="fw-bold text-dark mb-3">
+                        Liên kết
+                    </h5>
+
+                    <ul class="list-unstyled d-flex flex-column gap-3">
+
+                        <li>
+                            <a asp-controller="Home"
+                               asp-action="Index"
+                               class="text-decoration-none text-secondary hover-primary">
+
+                                Trang chủ
+                            </a>
+                        </li>
+
+                        <li>
+                            <a asp-controller="Product"
+                               asp-action="Search"
+                               class="text-decoration-none text-secondary hover-primary">
+
+                                Sản phẩm
+                            </a>
+                        </li>
+
+                        <li>
+                            <a asp-controller="Home"
+                               asp-action="Privacy"
+                               class="text-decoration-none text-secondary hover-primary">
+
+                                Chính sách bảo mật
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </div>
+
+                <!-- Categories -->
+                <div class="col-lg-3 col-md-6">
+
+                    <h5 class="fw-bold text-dark mb-3">
+                        Danh mục nổi bật
+                    </h5>
+
+                    <div class="d-flex flex-wrap gap-2">
+
+                        @foreach (var cat in dbCategories.Take(6))
+                        {
+                            <a href="/Product/Search?keyword=@(System.Net.WebUtility.UrlEncode(cat.Name))"
+                               class="badge rounded-pill text-dark bg-light border px-3 py-2 text-decoration-none">
+
+                                @cat.Name
+                            </a>
+                        }
+
+                    </div>
+
+                </div>
+
+                <!-- Contact -->
+                <div class="col-lg-3 col-md-6">
+
+                    <h5 class="fw-bold text-dark mb-3">
+                        Liên hệ
+                    </h5>
+
+                    <div class="d-flex flex-column gap-3 text-secondary">
+
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-geo-alt-fill text-primary"></i>
+                            <span>TP. Hồ Chí Minh, Việt Nam</span>
+                        </div>
+
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-telephone-fill text-success"></i>
+                            <span>Hotline: 1800 1060</span>
+                        </div>
+
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-envelope-fill text-danger"></i>
+                            <span>support@electristore.com</span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Bottom -->
+            <div class="border-top mt-4 pt-4 d-flex flex-column flex-md-row justify-content-between align-items-center">
+
+                <div class="text-secondary">
+                    © 2026 ElectriStore. All rights reserved.
+                </div>
+
+                <div class="d-flex gap-4 mt-3 mt-md-0">
+
+                    <a href="#" class="text-decoration-none text-secondary hover-primary">
+                        FAQ
+                    </a>
+
+                    <a href="#" class="text-decoration-none text-secondary hover-primary">
+                        Hỗ trợ
+                    </a>
+
+                    <a href="#" class="text-decoration-none text-secondary hover-primary">
+                        Liên hệ
+                    </a>
+
+                </div>
+
+            </div>
+
         </div>
+
     </footer>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
@@ -239,6 +398,12 @@
             </text>
         }
     </script> *@
-
+   
 </body>
 </html>
+<style>
+    body{
+        padding:0px;
+        margin:0px;
+    }
+</style>
