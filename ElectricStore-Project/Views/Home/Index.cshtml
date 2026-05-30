@@ -297,7 +297,7 @@
 
                                 <!-- Sharp Product Image Container -->
                                 <div class="img-container rounded-3 mb-3">
-                                    <img src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&q=80&w=400" alt="@product.Name" loading="lazy" />
+                                    <img src="@Url.Content("~/img/" + (product.ImageList != null && product.ImageList.Any() ? product.ImageList[0] : "baner.png"))" alt="@product.Name" loading="lazy" />
                                 </div>
 
                                 <!-- Config Specification Badge -->

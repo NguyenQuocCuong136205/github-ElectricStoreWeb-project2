@@ -39,12 +39,33 @@ namespace ElectricStore_Project.Controllers
 
         public async Task<IActionResult> Details(int id)
         {
-            var product = await productService.GetProductByIdAsync(id);
-            if (product == null)
+            var p = await productService.GetProductByIdAsync(id);
+            if (p == null)
             {
                 return NotFound();
             }
-            return View(product);
+
+            var dto = new ProductDisplayDTO
+            {
+                Id = p.Id,
+                Name = p.Name ?? "",
+                Brand = p.Brand != null ? p.Brand.BrandName ?? "No Brand" : "No Brand",
+                Category = p.Category != null ? p.Category.Name ?? "No Category" : "No Category",
+                SalePrice = p.SalePrice ?? 0,
+                OriginalPrice = p.OriginalPrice ?? 0,
+                StockQuantity = p.StockQuantity ?? 0,
+                SupplierName = p.Supplier != null ? p.Supplier.Name ?? "No Supplier" : "No Supplier",
+                MadeIn = p.MadeInNavigation != null ? p.MadeInNavigation.Country1 ?? "Unknown" : "Unknown",
+                SalceCount = p.SaleCount.HasValue ? p.SaleCount.Value.ToString() : "0",
+                Rating = p.Rating ?? 0,
+                GiftInfo = p.Gift ?? "",
+                IstallmentTag = p.InstallmentTag ?? "",
+                Description = p.Description ?? "",
+                IsActive = p.IsActive ?? false,
+                ImageList = p.ProductImages.OrderBy(pi => pi.DisplayOrder).Select(pi => pi.Img ?? "").ToList()
+            };
+
+            return View(dto);
         }
     }
 }

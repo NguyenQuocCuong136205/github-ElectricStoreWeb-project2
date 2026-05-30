@@ -1,4 +1,4 @@
-﻿namespace ElectricStore_Project.DTOs.Products
+namespace ElectricStore_Project.DTOs.Products
 {
     public class AllProductInforDTO
     {
@@ -21,5 +21,7 @@
         public double ScreenSize { get; set; }
         public int PinCapacity { get; set; }
 
+        public int? MadeIn { get; set; }
+        public List<Microsoft.AspNetCore.Http.IFormFile>? ImageFiles { get; set; }
     }
 }

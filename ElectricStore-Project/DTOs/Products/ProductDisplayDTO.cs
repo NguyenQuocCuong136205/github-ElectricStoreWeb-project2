@@ -11,7 +11,7 @@ namespace ElectricStore_Project.DTOs.Products
         public string Category { get; set; }
         public decimal OriginalPrice {  get; set; }
         public decimal SalePrice { get; set; }
-        public string ImageUrl { get; set; }
+        //public string ImageUrl { get; set; }
         //public decimal imporetprice { get; set; }
         public int StockQuantity { get; set; }
         public string SupplierName { get; set; }

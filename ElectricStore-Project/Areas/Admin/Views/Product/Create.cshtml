@@ -1,5 +1,587 @@
-﻿@model IEnumerable<ElectricStore_Project.DTOs.Products.AllProductInforDTO>
+@model ElectricStore_Project.DTOs.Products.AllProductInforDTO
 
 @{
-    ViewData["Title"] =
+    ViewData["Title"] = "Thêm Mới Sản Phẩm Hàng Loạt";
+
+    var categories = ViewBag.Categories as List<ElectricStore_Project.Models.Category> ?? new List<ElectricStore_Project.Models.Category>();
+    var brands = ViewBag.Brands as List<ElectricStore_Project.Models.Brand> ?? new List<ElectricStore_Project.Models.Brand>();
+    var countries = ViewBag.Countries as List<ElectricStore_Project.Models.Country> ?? new List<ElectricStore_Project.Models.Country>();
+    var suppliers = ViewBag.Suppliers as List<ElectricStore_Project.Models.Supplier> ?? new List<ElectricStore_Project.Models.Supplier>();
 }
+
+<div class="container mt-4">
+    <!-- Header & Breadcrumbs -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1 text-primary fw-bold">Thêm Mới Sản Phẩm Hàng Loạt</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Home" asp-action="Index">Admin</a></li>
+                    <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Product" asp-action="Index">Sản phẩm</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Tạo hàng loạt</li>
+                </ol>
+            </nav>
+        </div>
+        <a asp-area="Admin" asp-controller="Product" asp-action="Index" class="btn btn-outline-secondary rounded-pill px-3">
+            <i class="bi bi-arrow-left me-1"></i> Quay lại danh sách
+        </a>
+    </div>
+
+    <!-- Product Entry Form -->
+    <form id="productForm" class="needs-validation" novalidate>
+        @Html.AntiForgeryToken()
+        
+        <div class="row g-4">
+            <!-- Left Column: Core Fields -->
+            <div class="col-lg-8">
+                <!-- Card 1: Basic Information -->
+                <div class="card border-0 shadow-sm rounded-3 mb-4">
+                    <div class="card-header bg-white py-3 border-bottom border-light">
+                        <h5 class="mb-0 fw-bold text-dark d-flex align-items-center">
+                            <i class="bi bi-box-seam text-primary me-2"></i> 1. Thông Tin Cơ Bản
+                        </h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <!-- Product Name -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold text-secondary">Tên sản phẩm <span class="text-danger">*</span></label>
+                            <input type="text" id="Name" class="form-control py-2.5 px-3 border-secondary-subtle focus-ring" required placeholder="Nhập tên sản phẩm..." />
+                            <div class="invalid-feedback">Vui lòng nhập tên sản phẩm.</div>
+                        </div>
+
+                        <div class="row">
+                            <!-- Category -->
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-semibold text-secondary">Danh mục <span class="text-danger">*</span></label>
+                                <select id="Category" class="form-select py-2.5 border-secondary-subtle focus-ring" required>
+                                    <option value="">-- Chọn danh mục --</option>
+                                    @foreach (var cat in categories)
+                                    {
+                                        <option value="@cat.Id">@cat.Name</option>
+                                    }
+                                </select>
+                                <div class="invalid-feedback">Vui lòng chọn danh mục.</div>
+                            </div>
+
+                            <!-- Brand -->
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-semibold text-secondary">Thương hiệu <span class="text-danger">*</span></label>
+                                <select id="Brand" class="form-select py-2.5 border-secondary-subtle focus-ring" required>
+                                    <option value="">-- Chọn thương hiệu --</option>
+                                    @foreach (var brand in brands)
+                                    {
+                                        <option value="@brand.Id">@brand.BrandName</option>
+                                    }
+                                </select>
+                                <div class="invalid-feedback">Vui lòng chọn thương hiệu.</div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <!-- Supplier -->
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-semibold text-secondary">Nhà cung cấp <span class="text-danger">*</span></label>
+                                <select id="SupplierName" class="form-select py-2.5 border-secondary-subtle focus-ring" required>
+                                    <option value="">-- Chọn nhà cung cấp --</option>
+                                    @foreach (var supplier in suppliers)
+                                    {
+                                        <option value="@supplier.Id">@supplier.Name</option>
+                                    }
+                                </select>
+                                <div class="invalid-feedback">Vui lòng chọn nhà cung cấp.</div>
+                            </div>
+
+                            <!-- Country (Made In) -->
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-semibold text-secondary">Quốc gia sản xuất</label>
+                                <select id="MadeIn" class="form-select py-2.5 border-secondary-subtle focus-ring">
+                                    <option value="">-- Chọn quốc gia --</option>
+                                    @foreach (var country in countries)
+                                    {
+                                        <option value="@country.Id">@country.Country1</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Status -->
+                        <div class="mb-0">
+                            <label class="form-label fw-semibold text-secondary d-block">Trạng thái kinh doanh</label>
+                            <div class="form-check form-check-inline mt-1">
+                                <input class="form-check-input" type="radio" name="IsActive" value="true" id="isActiveTrue" checked />
+                                <label class="form-check-label fw-medium text-success" for="isActiveTrue">Kinh doanh (Active)</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="IsActive" value="false" id="isActiveFalse" />
+                                <label class="form-check-label fw-medium text-danger" for="isActiveFalse">Tạm ngưng (Inactive)</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Pricing & Inventory -->
+                <div class="card border-0 shadow-sm rounded-3 mb-4">
+                    <div class="card-header bg-white py-3 border-bottom border-light">
+                        <h5 class="mb-0 fw-bold text-dark d-flex align-items-center">
+                            <i class="bi bi-currency-dollar text-success me-2"></i> 2. Giá Cả & Kho Hàng
+                        </h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="row">
+                            <!-- Import Price -->
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label fw-semibold text-secondary">Giá nhập (₫) <span class="text-danger">*</span></label>
+                                <input type="number" id="ImportPrice" class="form-control py-2.5 border-secondary-subtle focus-ring" required min="0" step="any" placeholder="0" />
+                                <div class="invalid-feedback">Vui lòng nhập giá nhập.</div>
+                            </div>
+
+                            <!-- Sale Price -->
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label fw-semibold text-secondary">Giá bán (₫) <span class="text-danger">*</span></label>
+                                <input type="number" id="SalePrice" class="form-control py-2.5 border-secondary-subtle focus-ring" required min="0" step="any" placeholder="0" />
+                                <div class="invalid-feedback">Vui lòng nhập giá bán.</div>
+                            </div>
+
+                            <!-- Original Price -->
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label fw-semibold text-secondary">Giá gốc (₫)</label>
+                                <input type="number" id="OriginalPrice" class="form-control py-2.5 border-secondary-subtle focus-ring" min="0" step="any" placeholder="0" />
+                            </div>
+                        </div>
+
+                        <!-- Stock Quantity -->
+                        <div class="mb-0">
+                            <label class="form-label fw-semibold text-secondary">Số lượng tồn kho <span class="text-danger">*</span></label>
+                            <input type="number" id="StockQuantity" class="form-control py-2.5 border-secondary-subtle focus-ring" required min="0" placeholder="Nhập số lượng tồn kho..." />
+                            <div class="invalid-feedback">Vui lòng nhập số lượng tồn kho.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: Gift & Promotion -->
+                <div class="card border-0 shadow-sm rounded-3 mb-4">
+                    <div class="card-header bg-white py-3 border-bottom border-light">
+                        <h5 class="mb-0 fw-bold text-dark d-flex align-items-center">
+                            <i class="bi bi-gift text-warning me-2"></i> 3. Khuyến Mãi & Quà Tặng
+                        </h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="row">
+                            <!-- Installment Tag -->
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-semibold text-secondary">Thẻ trả góp</label>
+                                <input type="text" id="IstallmentTag" class="form-control py-2.5 border-secondary-subtle focus-ring" placeholder="Ví dụ: Trả góp 0%, Trả góp từ 1tr..." />
+                            </div>
+
+                            <!-- Gift Info -->
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-semibold text-secondary">Thông tin quà tặng</label>
+                                <input type="text" id="GiftInfo" class="form-control py-2.5 border-secondary-subtle focus-ring" placeholder="Ví dụ: Tai nghe bluetooth, Bao da cao cấp..." />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Specs & File Upload -->
+            <div class="col-lg-4">
+                <!-- Card 4: Hardware Specifications -->
+                <div class="card border-0 shadow-sm rounded-3 mb-4">
+                    <div class="card-header bg-white py-3 border-bottom border-light">
+                        <h5 class="mb-0 fw-bold text-dark d-flex align-items-center">
+                            <i class="bi bi-cpu text-info me-2"></i> 4. Thông Số Kỹ Thuật
+                        </h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <!-- CPU -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold text-secondary">CPU</label>
+                            <input type="text" id="CPU" class="form-control py-2 border-secondary-subtle focus-ring" placeholder="Ví dụ: Apple A17 Pro, Snapdragon 8 Gen 3..." />
+                        </div>
+
+                        <div class="row">
+                            <!-- RAM -->
+                            <div class="col-6 mb-3">
+                                <label class="form-label fw-semibold text-secondary">RAM (GB)</label>
+                                <input type="number" id="Ram" class="form-control py-2 border-secondary-subtle focus-ring" min="0" placeholder="8" />
+                            </div>
+
+                            <!-- Memory (Storage) -->
+                            <div class="col-6 mb-3">
+                                <label class="form-label fw-semibold text-secondary">Bộ nhớ (GB)</label>
+                                <input type="number" id="Memory" class="form-control py-2 border-secondary-subtle focus-ring" min="0" placeholder="128" />
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <!-- Screen Size -->
+                            <div class="col-6 mb-3">
+                                <label class="form-label fw-semibold text-secondary">Màn hình (inch)</label>
+                                <input type="number" step="0.1" id="ScreenSize" class="form-control py-2 border-secondary-subtle focus-ring" min="0" placeholder="6.7" />
+                            </div>
+
+                            <!-- Battery Capacity -->
+                            <div class="col-6 mb-3">
+                                <label class="form-label fw-semibold text-secondary">Dung lượng Pin</label>
+                                <input type="number" id="PinCapacity" class="form-control py-2 border-secondary-subtle focus-ring" min="0" placeholder="5000" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 5: Product Image File Upload -->
+                <div class="card border-0 shadow-sm rounded-3 mb-4">
+                    <div class="card-header bg-white py-3 border-bottom border-light">
+                        <h5 class="mb-0 fw-bold text-dark d-flex align-items-center">
+                            <i class="bi bi-images text-danger me-2"></i> 5. Hình Ảnh Sản Phẩm
+                        </h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold text-secondary">Chọn hình ảnh từ máy tính <span class="text-danger">*</span></label>
+                            <div class="file-upload-wrapper border border-2 border-dashed border-secondary-subtle rounded-3 text-center p-4 position-relative hover-bg-light cursor-pointer" onclick="document.getElementById('ProductFiles').click();">
+                                <i class="bi bi-cloud-arrow-up-fill fs-1 text-primary mb-2 d-block"></i>
+                                <span class="fw-semibold text-dark d-block">Nhấn vào đây để chọn ảnh</span>
+                                <span class="text-muted small">Hỗ trợ chọn nhiều ảnh cùng lúc (.jpg, .png, .webp)</span>
+                                <input type="file" id="ProductFiles" class="d-none" multiple accept="image/*" />
+                            </div>
+                        </div>
+                        <div id="fileListContainer" class="d-none">
+                            <h6 class="fw-semibold text-secondary mb-2 small"><i class="bi bi-paperclip me-1"></i>Danh sách ảnh đã chọn (<span id="selectedFileCount">0</span>):</h6>
+                            <ul id="selectedFileList" class="list-group list-group-flush rounded-3 border overflow-auto" style="max-height: 180px;">
+                                <!-- Rendered dynamically -->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Full Width Column: Description -->
+            <div class="col-12">
+                <div class="card border-0 shadow-sm rounded-3 mb-4">
+                    <div class="card-header bg-white py-3 border-bottom border-light">
+                        <h5 class="mb-0 fw-bold text-dark d-flex align-items-center">
+                            <i class="bi bi-file-text-fill text-muted me-2"></i> 6. Mô Tả Chi Tiết
+                        </h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <textarea id="Description" class="form-control border-secondary-subtle focus-ring" rows="5" placeholder="Mô tả các đặc điểm nổi bật, thông tin sản phẩm..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action buttons for Product Entry -->
+            <div class="col-12 d-flex justify-content-end gap-3 mb-4">
+                <button type="button" id="btnAddToList" class="btn btn-warning rounded-pill px-4 py-2.5 fw-bold text-dark shadow-sm hover-transform">
+                    <i class="bi bi-plus-circle me-1"></i> Thêm Vào Danh Sách Chờ
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <!-- SECTION: Pending Products List Table -->
+    <div id="pendingContainer" class="card border-0 shadow rounded-3 mb-5 d-none">
+        <div class="card-header bg-success text-white py-3 border-0 rounded-top-3">
+            <h5 class="mb-0 fw-bold d-flex align-items-center justify-content-between">
+                <span><i class="bi bi-list-check me-2"></i> DANH SÁCH SẢN PHẨM CHỜ TẠO (<span id="pendingCount">0</span>)</span>
+                <span class="badge bg-white text-success rounded-pill px-3 py-2 small fw-semibold">Sẵn sàng để tải lên</span>
+            </h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="py-3 px-3 text-center" style="width: 5%;">STT</th>
+                            <th class="py-3 px-3" style="width: 25%;">Tên sản phẩm</th>
+                            <th class="py-3 px-3 text-center" style="width: 12%;">Danh mục / Hãng</th>
+                            <th class="py-3 px-3 text-end" style="width: 15%;">Giá nhập / bán</th>
+                            <th class="py-3 px-3 text-center" style="width: 10%;">Tồn kho</th>
+                            <th class="py-3 px-3" style="width: 20%;">Thông số / Ảnh</th>
+                            <th class="py-3 px-3 text-center" style="width: 13%;">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pendingTableBody">
+                        <!-- Dynamic list rendered here -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Global Action Buttons for Batch Upload -->
+            <div class="p-4 bg-light d-flex justify-content-between align-items-center rounded-bottom-3 border-top">
+                <div class="text-secondary small">
+                    <i class="bi bi-info-circle me-1"></i> Hãy kiểm tra kỹ thông tin của từng sản phẩm trước khi tiến hành gửi lên server.
+                </div>
+                <div class="d-flex gap-3">
+                    <button type="button" id="btnSubmitAll" class="btn btn-success btn-lg rounded-pill px-5 py-3 fw-bold shadow-sm hover-transform">
+                        <i class="bi bi-cloud-upload me-1"></i> TẠO MỚI CÁC SẢN PHẨM
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modern Loading Overlay -->
+<div id="loadingOverlay" class="position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-75 d-flex flex-column align-items-center justify-content-center d-none" style="z-index: 9999;">
+    <div class="spinner-border text-light" role="status" style="width: 4rem; height: 4rem;">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+    <h5 class="text-white mt-4 fw-bold" id="loadingText">Đang lưu sản phẩm vào hệ thống, vui lòng đợi...</h5>
+</div>
+
+<style>
+    .focus-ring:focus {
+        border-color: #0d6efd !important;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important;
+    }
+    .border-dashed {
+        border-style: dashed !important;
+    }
+    .cursor-pointer {
+        cursor: pointer;
+    }
+    .hover-bg-light:hover {
+        background-color: #f8f9fa;
+        border-color: #0d6efd !important;
+    }
+    .hover-transform {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .hover-transform:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    }
+</style>
+
+<script>
+    // In-memory array to store products pending creation
+    let pendingProducts = [];
+    let currentSelectedFiles = [];
+
+    // Setup file input selection tracking
+    const fileInput = document.getElementById('ProductFiles');
+    const fileListContainer = document.getElementById('fileListContainer');
+    const selectedFileList = document.getElementById('selectedFileList');
+    const selectedFileCount = document.getElementById('selectedFileCount');
+
+    fileInput.addEventListener('change', function (e) {
+        currentSelectedFiles = Array.from(e.target.files);
+        renderSelectedFiles();
+    });
+
+    function renderSelectedFiles() {
+        selectedFileList.innerHTML = '';
+        if (currentSelectedFiles.length > 0) {
+            fileListContainer.classList.remove('d-none');
+            selectedFileCount.textContent = currentSelectedFiles.length;
+            currentSelectedFiles.forEach((file, index) => {
+                const li = document.createElement('li');
+                li.className = "list-group-item d-flex justify-content-between align-items-center py-2 px-3 small";
+                li.innerHTML = `
+                    <span class="text-truncate text-dark fw-medium" style="max-width: 80%;"><i class="bi bi-image text-danger me-1"></i>${file.name}</span>
+                    <button type="button" class="btn btn-link btn-sm text-danger p-0 border-0" onclick="removeSelectedFile(${index})"><i class="bi bi-trash"></i></button>
+                `;
+                selectedFileList.appendChild(li);
+            });
+        } else {
+            fileListContainer.classList.add('d-none');
+        }
+    }
+
+    window.removeSelectedFile = function (index) {
+        currentSelectedFiles.splice(index, 1);
+        
+        // Re-assign to file input using DataTransfer
+        const dt = new DataTransfer();
+        currentSelectedFiles.forEach(file => dt.items.add(file));
+        fileInput.files = dt.files;
+        
+        renderSelectedFiles();
+    };
+
+    // Form DOM Elements
+    const form = document.getElementById('productForm');
+    const pendingContainer = document.getElementById('pendingContainer');
+    const pendingTableBody = document.getElementById('pendingTableBody');
+    const pendingCount = document.getElementById('pendingCount');
+
+    // Add to pending list button
+    document.getElementById('btnAddToList').addEventListener('click', function () {
+        if (!form.checkValidity()) {
+            form.classList.add('was-validated');
+            return;
+        }
+
+        // Get Select Options Text
+        const catSelect = document.getElementById('Category');
+        const catText = catSelect.options[catSelect.selectedIndex].text;
+        
+        const brandSelect = document.getElementById('Brand');
+        const brandText = brandSelect.options[brandSelect.selectedIndex].text;
+
+        const supplierSelect = document.getElementById('SupplierName');
+        const supplierText = supplierSelect.options[supplierSelect.selectedIndex].text;
+
+        // Build product entry data object
+        const product = {
+            name: document.getElementById('Name').value,
+            category: catSelect.value, // Keep ID as string
+            categoryText: catText,
+            brand: brandSelect.value, // Keep ID as string
+            brandText: brandText,
+            supplierName: supplierSelect.value, // Keep ID as string
+            supplierText: supplierText,
+            madeIn: document.getElementById('MadeIn').value,
+            isActive: document.querySelector('input[name="IsActive"]:checked').value === 'true',
+            importPrice: parseFloat(document.getElementById('ImportPrice').value) || 0,
+            salePrice: parseFloat(document.getElementById('SalePrice').value) || 0,
+            originalPrice: parseFloat(document.getElementById('OriginalPrice').value) || 0,
+            stockQuantity: parseInt(document.getElementById('StockQuantity').value) || 0,
+            installmentTag: document.getElementById('IstallmentTag').value,
+            giftInfo: document.getElementById('GiftInfo').value,
+            cpu: document.getElementById('CPU').value,
+            ram: parseInt(document.getElementById('Ram').value) || 0,
+            memory: parseInt(document.getElementById('Memory').value) || 0,
+            screenSize: parseFloat(document.getElementById('ScreenSize').value) || 0,
+            pinCapacity: parseInt(document.getElementById('PinCapacity').value) || 0,
+            description: document.getElementById('Description').value,
+            files: [...currentSelectedFiles] // Clone selected files array
+        };
+
+        // Add to pending products array
+        pendingProducts.push(product);
+
+        // Reset the input fields on the screen
+        form.reset();
+        form.classList.remove('was-validated');
+        currentSelectedFiles = [];
+        fileInput.value = '';
+        renderSelectedFiles();
+
+        // Render the pending list table
+        renderPendingTable();
+    });
+
+    function renderPendingTable() {
+        pendingTableBody.innerHTML = '';
+        if (pendingProducts.length > 0) {
+            pendingContainer.classList.remove('d-none');
+            pendingCount.textContent = pendingProducts.length;
+
+            pendingProducts.forEach((prod, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="text-center fw-bold text-secondary">${index + 1}</td>
+                    <td>
+                        <div class="fw-bold text-primary">${prod.name}</div>
+                        ${prod.installmentTag ? `<span class="badge bg-warning text-dark me-1 small">${prod.installmentTag}</span>` : ''}
+                        ${prod.giftInfo ? `<span class="badge bg-info text-white small"><i class="bi bi-gift-fill me-1"></i>${prod.giftInfo}</span>` : ''}
+                    </td>
+                    <td class="text-center">
+                        <span class="badge bg-light text-dark border px-2 py-1 rounded-pill d-block mb-1">${prod.categoryText}</span>
+                        <span class="badge bg-light text-primary border px-2 py-1 rounded-pill d-block">${prod.brandText}</span>
+                    </td>
+                    <td class="text-end">
+                        <div class="small text-muted">Nhập: <strong>${prod.importPrice.toLocaleString('vi-VN')} ₫</strong></div>
+                        <div class="text-success fw-bold">Bán: <strong>${prod.salePrice.toLocaleString('vi-VN')} ₫</strong></div>
+                    </td>
+                    <td class="text-center fw-semibold ${prod.stockQuantity <= 10 ? 'text-danger' : 'text-dark'}">${prod.stockQuantity} chiếc</td>
+                    <td>
+                        <div class="small">CPU: <strong>${prod.cpu || 'N/A'}</strong> | RAM: <strong>${prod.ram ? prod.ram + 'GB' : 'N/A'}</strong></div>
+                        <div class="small mb-1">Pin: <strong>${prod.pinCapacity ? prod.pinCapacity + 'mAh' : 'N/A'}</strong></div>
+                        <div class="text-secondary small fw-medium mt-1">
+                            <i class="bi bi-images text-danger me-1"></i><strong>${prod.files.length} ảnh</strong> đã chọn
+                        </div>
+                    </td>
+                    <td class="text-center">
+                        <button type="button" class="btn btn-outline-danger btn-sm rounded-pill px-3" onclick="removePendingProduct(${index})">
+                            <i class="bi bi-trash me-1"></i> Xóa
+                        </button>
+                    </td>
+                `;
+                pendingTableBody.appendChild(tr);
+            });
+        } else {
+            pendingContainer.classList.add('d-none');
+        }
+    }
+
+    window.removePendingProduct = function(index) {
+        pendingProducts.splice(index, 1);
+        renderPendingTable();
+    };
+
+    // Batch Submit Button Event
+    document.getElementById('btnSubmitAll').addEventListener('click', function () {
+        if (pendingProducts.length === 0) return;
+
+        // Show overlay loading
+        const overlay = document.getElementById('loadingOverlay');
+        const loadingText = document.getElementById('loadingText');
+        overlay.classList.remove('d-none');
+        loadingText.innerHTML = `Đang lưu <strong class="text-warning">${pendingProducts.length}</strong> sản phẩm vào hệ thống. Vui lòng không đóng cửa sổ này...`;
+
+        // Create FormData to post batch data
+        const formData = new FormData();
+
+        // Appending anti-forgery token
+        const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+        formData.append('__RequestVerificationToken', token);
+
+        pendingProducts.forEach((prod, index) => {
+            formData.append(`products[${index}].Name`, prod.name);
+            formData.append(`products[${index}].Category`, prod.category);
+            formData.append(`products[${index}].Brand`, prod.brand);
+            formData.append(`products[${index}].SupplierName`, prod.supplierName);
+            if (prod.madeIn) {
+                formData.append(`products[${index}].MadeIn`, prod.madeIn);
+            }
+            formData.append(`products[${index}].IsActive`, prod.isActive);
+            formData.append(`products[${index}].ImportPrice`, prod.importPrice);
+            formData.append(`products[${index}].SalePrice`, prod.salePrice);
+            formData.append(`products[${index}].OriginalPrice`, prod.originalPrice);
+            formData.append(`products[${index}].StockQuantity`, prod.stockQuantity);
+            formData.append(`products[${index}].IstallmentTag`, prod.installmentTag);
+            formData.append(`products[${index}].GiftInfo`, prod.giftInfo);
+            formData.append(`products[${index}].CPU`, prod.cpu);
+            formData.append(`products[${index}].Ram`, prod.ram);
+            formData.append(`products[${index}].Memory`, prod.memory);
+            formData.append(`products[${index}].ScreenSize`, prod.screenSize);
+            formData.append(`products[${index}].PinCapacity`, prod.pinCapacity);
+            formData.append(`products[${index}].Description`, prod.description);
+
+            // Add corresponding file binaries
+            if (prod.files && prod.files.length > 0) {
+                prod.files.forEach((file, fileIndex) => {
+                    formData.append(`products[${index}].ImageFiles[${fileIndex}]`, file);
+                });
+            }
+        });
+
+        // Make AJAX request
+        fetch('/Admin/Product/CreateBatch', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            overlay.classList.add('d-none');
+            if (data.success) {
+                pendingProducts = [];
+                renderPendingTable();
+                
+                // Show success visual alert
+                alert("Tạo loạt sản phẩm thành công!");
+                window.location.href = data.redirectUrl;
+            } else {
+                alert("Đã xảy ra lỗi: " + data.message);
+            }
+        })
+        .catch(error => {
+            overlay.classList.add('d-none');
+            alert("Đã xảy ra lỗi đường truyền mạng hoặc máy chủ!");
+            console.error("Error submitting batch:", error);
+        });
+    });
+</script>

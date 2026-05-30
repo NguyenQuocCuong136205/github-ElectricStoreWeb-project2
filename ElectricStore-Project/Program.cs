@@ -5,6 +5,7 @@ using ElectricStore_Project.Repositories.Carts;
 using ElectricStore_Project.Repositories.Categories;
 using ElectricStore_Project.Repositories.Countries;
 using ElectricStore_Project.Repositories.Customers;
+using ElectricStore_Project.Repositories.ProductImgs;
 using ElectricStore_Project.Repositories.Products;
 using ElectricStore_Project.Repositories.Suppliers;
 using ElectricStore_Project.Services.Addresses;
@@ -40,6 +41,7 @@ builder.Services.AddDbContext<ElectronicStoreContext>(options => options.UseSqlS
 
 // thêm repositories vào DI container
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IProductImageRepository, ProductImageRepository>();
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<IBrandRepository, BrandRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();

@@ -37,9 +37,14 @@ namespace ElectricStore_Project.Services.Products
                 MadeIn = p.MadeInNavigation != null ? p.MadeInNavigation.Country1 ?? "Unknown" : "Unknown",
                 Rating = p.Rating ?? 0,
                 Description = p.Description ?? "",
-                IsActive = p.IsActive ?? false
+                IsActive = p.IsActive ?? false,
+                OriginalPrice = p.OriginalPrice ?? 0,
+                SalceCount = p.SaleCount.HasValue ? p.SaleCount.Value.ToString() : "0",
+                IstallmentTag = p.InstallmentTag ?? "",
+                GiftInfo = p.Gift ?? "",
+                ImageList = p.ProductImages.OrderBy(pi => pi.DisplayOrder).Select(pi => pi.Img ?? "").ToList()
             }).ToList();
-
+            
             return productList;
         }
 
@@ -58,7 +63,12 @@ namespace ElectricStore_Project.Services.Products
                 MadeIn = p.MadeInNavigation != null ? p.MadeInNavigation.Country1 ?? "Unknown" : "Unknown",
                 Rating = p.Rating ?? 0,
                 Description = p.Description ?? "",
-                IsActive = p.IsActive ?? false
+                IsActive = p.IsActive ?? false,
+                OriginalPrice = p.OriginalPrice ?? 0,
+                SalceCount = p.SaleCount.HasValue ? p.SaleCount.Value.ToString() : "0",
+                IstallmentTag = p.InstallmentTag ?? "",
+                GiftInfo = p.Gift ?? "",
+                ImageList = p.ProductImages.OrderBy(pi => pi.DisplayOrder).Select(pi => pi.Img ?? "").ToList()
             }).ToList();
 
             return productList;
@@ -84,7 +94,12 @@ namespace ElectricStore_Project.Services.Products
                 MadeIn = p.MadeInNavigation != null ? p.MadeInNavigation.Country1 ?? "Unknown" : "Unknown",
                 Rating = p.Rating ?? 0,
                 Description = p.Description ?? "",
-                IsActive = p.IsActive ?? false
+                IsActive = p.IsActive ?? false,
+                OriginalPrice = p.OriginalPrice ?? 0,
+                SalceCount = p.SaleCount.HasValue ? p.SaleCount.Value.ToString() : "0",
+                IstallmentTag = p.InstallmentTag ?? "",
+                GiftInfo = p.Gift ?? "",
+                ImageList = p.ProductImages.OrderBy(pi => pi.DisplayOrder).Select(pi => pi.Img ?? "").ToList()
             }).ToList();
             return productList;
         }

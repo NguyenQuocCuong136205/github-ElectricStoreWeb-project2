@@ -18,6 +18,7 @@ namespace ElectricStore_Project.Repositories.Products
                 .Include(p => p.Category)
                 .Include(p => p.Supplier)
                 .Include(p => p.MadeInNavigation)
+                .Include(p => p.ProductImages)
                 .ToListAsync();
         }
 
@@ -28,17 +29,32 @@ namespace ElectricStore_Project.Repositories.Products
                 .Include(p => p.Category)
                 .Include(p => p.ProductImages)
                 .Include(p => p.MadeInNavigation)
+                .Include(p => p.Supplier)
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
         public async Task<IEnumerable<ElectricStore_Project.Models.Product>> GetAllProductByKeyworkAsync(string keywork)
         {
-            return await _context.Products.Where(p => p.Name != null && p.Name.Contains(keywork)).ToListAsync();
+            return await _context.Products
+                .Include(p => p.Brand)
+                .Include(p => p.Category)
+                .Include(p => p.Supplier)
+                .Include(p => p.MadeInNavigation)
+                .Include(p => p.ProductImages)
+                .Where(p => p.Name != null && p.Name.Contains(keywork))
+                .ToListAsync();
         }
 
         public async Task<IEnumerable<ElectricStore_Project.Models.Product>> GetProductsByCategoryIdAsync(int categoryId)
         {
-            return await _context.Products.Where(p => p.CategoryId == categoryId).ToListAsync();
+            return await _context.Products
+                .Include(p => p.Brand)
+                .Include(p => p.Category)
+                .Include(p => p.Supplier)
+                .Include(p => p.MadeInNavigation)
+                .Include(p => p.ProductImages)
+                .Where(p => p.CategoryId == categoryId)
+                .ToListAsync();
         }
     }
 }
