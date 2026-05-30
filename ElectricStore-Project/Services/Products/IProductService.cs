@@ -9,5 +9,6 @@ namespace ElectricStore_Project.Services.Products
         Task<Product?> GetProductByIdAsync(int id);
         Task<IEnumerable<ProductDisplayDTO>> GetProductDisplayDTOsAsync();
         Task<IEnumerable<ProductDisplayDTO>> GetAllProductByKeywordAsync(string keyword);
+        Task<IEnumerable<ProductDisplayDTO>> GetProductsByCategoryIdAsync(int categoryId);
     }
 }

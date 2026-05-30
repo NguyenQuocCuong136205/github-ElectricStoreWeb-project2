@@ -14,6 +14,9 @@
                     <li class="breadcrumb-item active" aria-current="page">Sản phẩm</li>
                 </ol>
             </nav>
+            <button class="btn btn-warning btn-lg px-4 py-2.5 rounded-pill shadow-sm fw-semibold hover-transform text-dark border-0" data-bs-toggle="modal" data-bs-target="#CreateProductModal">
+                <i class="bi bi-pencil-square me-2"></i> Thêm mới sản phẩm
+            </button>
         </div>
     </div>
 
@@ -230,6 +233,23 @@
         </div>
     </div>
 </div>
+
+<!--Modal thêm mới sản phẩm-->
+<div class="modal fade" id="CreateProductModal" tabindex="-1" aria-labelledby="CreateProductModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-3">
+            <div class="modal-header bg-warning text-dark py-3">
+                <h5 class="modal-title fw-bold d-flex align-items-center" id="CreateProductModalLabel">
+                    <i class="bi bi-pencil-square me-2"></i> Thêm sản phẩm
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
 
 <style>
     .hover-transform {

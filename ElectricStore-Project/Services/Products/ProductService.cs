@@ -64,13 +64,29 @@ namespace ElectricStore_Project.Services.Products
             return productList;
         }
 
-
-
-
         // used for show all information for admin
         public async Task<Product?> GetProductByIdAsync(int id)
         {
             return await productRepository.GetProductByIdAsync(id);
+        }
+
+        public async Task<IEnumerable<ProductDisplayDTO>> GetProductsByCategoryIdAsync(int categoryId)
+        {
+            var products = await productRepository.GetProductsByCategoryIdAsync(categoryId);
+            var productList = products.Select(p => new ProductDisplayDTO
+            {
+                Id = p.Id,
+                Name = p.Name ?? "",
+                Brand = p.Brand != null ? p.Brand.BrandName ?? "No Brand" : "No Brand",
+                Category = p.Category != null ? p.Category.Name ?? "No Category" : "No Category",
+                SalePrice = p.SalePrice ?? 0,
+                StockQuantity = p.StockQuantity ?? 0,
+                MadeIn = p.MadeInNavigation != null ? p.MadeInNavigation.Country1 ?? "Unknown" : "Unknown",
+                Rating = p.Rating ?? 0,
+                Description = p.Description ?? "",
+                IsActive = p.IsActive ?? false
+            }).ToList();
+            return productList;
         }
     }
 }

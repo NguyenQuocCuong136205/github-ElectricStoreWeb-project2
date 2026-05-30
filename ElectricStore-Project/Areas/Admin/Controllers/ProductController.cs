@@ -1,4 +1,4 @@
-using ElectricStore_Project.Models;
+    using ElectricStore_Project.Models;
 using ElectricStore_Project.Services.Products;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -85,5 +85,17 @@ namespace ElectricStore_Project.Areas.Admin.Controllers
 
             return RedirectToAction(nameof(Details), new { id = product.Id });
         }
+
+        [HttpGet]
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        //[HttpPost]
+        //public IActionResult Create()
+        //{
+
+        //}
     }
 }

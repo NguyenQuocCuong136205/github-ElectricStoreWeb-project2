@@ -49,15 +49,15 @@ namespace ElectricStore_Project.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Edit(int id)
+        public async Task<IActionResult> Edit()
         {
-            var brand = await _brandService.GetBrandByIdAsync(id);
-            if (brand == null)
-            {
-                TempData["ErrorMessage"] = "Không tìm thấy thương hiệu.";
-                return RedirectToAction(nameof(Index));
-            }
-            return View(brand);
+            //var brand = await _brandService.GetBrandByIdAsync(id);
+            //if (brand == null)
+            //{
+            //    TempData["ErrorMessage"] = "Không tìm thấy thương hiệu.";
+            //    return RedirectToAction(nameof(Index));
+            //}
+            return View();
         }
 
         [HttpPost]

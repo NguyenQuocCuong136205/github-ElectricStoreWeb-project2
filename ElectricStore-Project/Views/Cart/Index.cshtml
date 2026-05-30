@@ -1,0 +1,503 @@
+@model ElectricStore_Project.DTOs.Carts.CartDisplayDTO
+
+@{
+    ViewData["Title"] = "Giỏ Hàng Của Bạn - ElectriStore";
+}
+
+<style>
+    /* Premium Cart Styles */
+    .cart-title {
+        font-family: 'Inter', sans-serif;
+        font-weight: 700;
+        font-size: 1.8rem;
+        color: #212529;
+        position: relative;
+        display: inline-block;
+        padding-bottom: 8px;
+    }
+
+    .cart-title::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 50px;
+        height: 4px;
+        background: linear-gradient(90deg, #0d6efd, #0b5ed7);
+        border-radius: 2px;
+    }
+
+    /* Table / Card Container styling */
+    .premium-card {
+        background: #ffffff;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+        overflow: hidden;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .cart-item-row {
+        border-bottom: 1px solid #f1f3f4;
+        transition: background-color 0.2s;
+        padding: 20px;
+    }
+
+    .cart-item-row:last-child {
+        border-bottom: none;
+    }
+
+    .cart-item-row:hover {
+        background-color: #fcfdfe;
+    }
+
+    /* Product image inside cart */
+    .cart-img-container {
+        width: 90px;
+        height: 90px;
+        background-color: #fafafa;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px;
+        border: 1px solid rgba(0, 0, 0, 0.03);
+    }
+
+    .cart-img-container img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+
+    /* Product Name */
+    .cart-item-name {
+        font-size: 15px;
+        font-weight: 600;
+        color: #202124;
+        text-decoration: none;
+        transition: color 0.15s;
+    }
+
+    .cart-item-name:hover {
+        color: #0d6efd;
+    }
+
+    /* Specs badge styling */
+    .spec-tag {
+        font-size: 11px;
+        background-color: #f1f3f4;
+        color: #5f6368;
+        padding: 3px 8px;
+        border-radius: 6px;
+        font-weight: 500;
+        margin-right: 6px;
+        margin-bottom: 4px;
+        display: inline-block;
+        border: 1px solid rgba(0,0,0,0.02);
+    }
+
+    /* Quantity editor */
+    .qty-input-group {
+        max-width: 120px;
+        border: 1px solid #dadce0;
+        border-radius: 30px;
+        overflow: hidden;
+        background-color: #ffffff;
+    }
+
+    .qty-btn {
+        background: none;
+        border: none;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #5f6368;
+        font-weight: bold;
+        transition: background-color 0.2s, color 0.2s;
+    }
+
+    .qty-btn:hover {
+        background-color: #f1f3f4;
+        color: #202124;
+    }
+
+    .qty-num {
+        border: none;
+        text-align: center;
+        width: 45px;
+        font-weight: 600;
+        font-size: 14px;
+        color: #202124;
+        outline: none;
+        box-shadow: none !important;
+    }
+
+    /* Prices styling */
+    .item-price {
+        font-weight: 500;
+        color: #5f6368;
+        font-size: 14px;
+    }
+
+    .item-subtotal {
+        font-weight: 700;
+        color: #202124;
+        font-size: 16px;
+    }
+
+    /* Summary Card */
+    .summary-card {
+        border-radius: 16px;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        box-shadow: 0 4px 25px rgba(0, 0, 0, 0.04);
+        background: #ffffff;
+        padding: 24px;
+    }
+
+    .total-price-highlight {
+        color: #d93025;
+        font-size: 24px;
+        font-weight: 800;
+    }
+
+    /* Glowing checkout button */
+    .btn-checkout-premium {
+        background: linear-gradient(135deg, #0d6efd, #0b5ed7);
+        border: none;
+        color: #ffffff;
+        font-weight: 600;
+        padding: 14px 24px;
+        border-radius: 30px;
+        box-shadow: 0 4px 15px rgba(13, 110, 253, 0.25);
+        transition: all 0.25s ease-in-out;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .btn-checkout-premium:hover {
+        background: linear-gradient(135deg, #0b5ed7, #0a58ca);
+        box-shadow: 0 6px 20px rgba(13, 110, 253, 0.35);
+        transform: translateY(-2px);
+        color: #ffffff;
+    }
+
+    /* Empty Cart Layout */
+    .empty-cart-illustration {
+        max-width: 260px;
+        margin-bottom: 30px;
+        opacity: 0.85;
+        animation: floatAnimation 3s ease-in-out infinite;
+    }
+
+    @@keyframes floatAnimation {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-8px); }
+    }
+
+    .btn-shopping-premium {
+        border: 2px solid #0d6efd;
+        color: #0d6efd;
+        background-color: #ffffff;
+        font-weight: 600;
+        padding: 12px 35px;
+        border-radius: 30px;
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 8px rgba(13, 110, 253, 0.05);
+    }
+
+    .btn-shopping-premium:hover {
+        background-color: #0d6efd;
+        color: #ffffff;
+        box-shadow: 0 4px 12px rgba(13, 110, 253, 0.18);
+        transform: translateY(-1px);
+    }
+</style>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+</head>
+<body>
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="cart-title">Giỏ hàng của bạn</h1>
+        </div>
+    </div>
+
+    @if (Model == null || Model.Items == null || Model.Items.Count == 0)
+    {
+        <!-- EMPTY CART VIEW -->
+        <div class="row py-5">
+            <div class="col-12 text-center py-5 d-flex flex-column align-items-center justify-content-center">
+                <!-- Premium Vector Placeholder for Empty Cart -->
+                <img src="https://cdn-icons-png.flaticon.com/512/11329/11329060.png" 
+                     alt="Giỏ hàng trống" 
+                     class="empty-cart-illustration img-fluid" />
+                
+                <h3 class="fw-bold text-dark mt-2" style="font-size: 22px;">Giỏ hàng của bạn đang trống</h3>
+                <p class="text-secondary mb-4" style="max-width: 450px; font-size: 14.5px;">
+                    Hãy lấp đầy giỏ hàng bằng những thiết bị công nghệ chính hãng và đồ gia dụng thông minh từ ElectriStore ngay nhé!
+                </p>
+                
+                <a href="/" class="btn btn-shopping-premium shadow-sm">
+                    <i class="bi bi-arrow-left me-2"></i>Tiếp tục mua sắm
+                </a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <!-- ACTIVE CART VIEW -->
+        <div class="row g-4">
+            
+            <!-- Left Side: List of Items -->
+            <div class="col-lg-8">
+                <div class="premium-card">
+                    <div class="p-3 bg-light border-bottom text-secondary fw-semibold small d-none d-md-flex align-items-center">
+                        <div style="width: 55%;" class="d-flex align-items-center gap-2">
+                            <input class="form-check-input" type="checkbox" id="select-all-cart" checked style="width: 17px; height: 17px; cursor: pointer; border-radius: 4px;" />
+                            <span>Sản phẩm</span>
+                        </div>
+                        <div style="width: 15%;" class="text-center">Đơn giá</div>
+                        <div style="width: 15%;" class="text-center">Số lượng</div>
+                        <div style="width: 15%;" class="text-end">Thành tiền</div>
+                    </div>
+
+                    <div class="d-flex flex-column">
+                        @foreach (var item in Model.Items)
+                        {
+                            <div class="cart-item-row" data-subtotal="@item.SubTotal" data-quantity="@item.Quantity">
+                                <div class="row align-items-center gy-3 gy-md-0">
+                                    
+                                    <!-- Product Info & Image -->
+                                    <div class="col-12 col-md-7 d-flex align-items-center gap-3">
+                                        <div class="flex-shrink-0">
+                                            <input class="form-check-input cart-item-checkbox" type="checkbox" value="@item.Id" checked style="width: 18px; height: 18px; cursor: pointer; border-radius: 4px;" />
+                                        </div>
+                                        <div class="cart-img-container shadow-sm flex-shrink-0">
+                                            <!-- Standard Unsplash placeholder for product image -->
+                                            <img src="" alt="@item.ProductName" />
+                                        </div>
+                                        <div>
+                                            <a href="/Product/Details/@item.ProductId" class="cart-item-name d-block mb-1">
+                                                @item.ProductName
+                                            </a>
+                                            
+                                            <!-- Dynamic Specifications Join Badges -->
+                                            @if (item.Specifications != null && item.Specifications.Any())
+                                            {
+                                                <div class="mt-2">
+                                                    @foreach (var spec in item.Specifications)
+                                                    {
+                                                        <span class="spec-tag">
+                                                            <strong>@spec.Key:</strong> @spec.Value
+                                                        </span>
+                                                    }
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+
+                                    <!-- Unit Price -->
+                                    <div class="col-4 col-md-2 text-md-center">
+                                        <span class="d-md-none text-secondary small d-block">Đơn giá:</span>
+                                        <span class="item-price">@item.SalePrice.ToString("N0")₫</span>
+                                    </div>
+
+                                    <!-- Quantity Editor -->
+                                    <div class="col-5 col-md-2 d-flex justify-content-md-center">
+                                        <form asp-controller="Cart" asp-action="UpdateQuantity" method="post" class="qty-form">
+                                            <input type="hidden" name="cartItemId" value="@item.Id" />
+                                            <div class="qty-input-group d-flex align-items-center">
+                                                <button type="submit" name="quantity" value="@(item.Quantity - 1)" class="qty-btn" @(item.Quantity <= 1 ? "disabled" : "")>-</button>
+                                                <input type="text" readonly class="qty-num" value="@item.Quantity" />
+                                                <button type="submit" name="quantity" value="@(item.Quantity + 1)" class="qty-btn">+</button>
+                                            </div>
+                                        </form>
+                                    </div>
+
+                                    <!-- Subtotal & Remove Button -->
+                                    <div class="col-3 col-md-1 d-flex flex-column align-items-end justify-content-center">
+                                        <span class="d-md-none text-secondary small d-block">Thành tiền:</span>
+                                        <span class="item-subtotal mb-1">@item.SubTotal.ToString("N0")₫</span>
+                                        
+                                        <!-- Remove Item Button Form -->
+                                        <form asp-controller="Cart" asp-action="Remove" method="post">
+                                            <input type="hidden" name="cartItemId" value="@item.Id" />
+                                            <button type="submit" class="btn btn-link text-danger p-0 mt-1 border-0 bg-transparent" title="Xóa khỏi giỏ hàng" style="font-size: 13.5px; text-decoration: none;">
+                                                <i class="bi bi-trash3 me-1"></i>Xóa
+                                            </button>
+                                        </form>
+                                    </div>
+
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side: Order Summary -->
+            <div class="col-lg-4">
+                <div class="summary-card">
+                    <h4 class="fw-bold text-dark border-bottom pb-3 mb-3">Tóm tắt đơn hàng</h4>
+                    
+                    <div class="d-flex justify-content-between mb-2 text-secondary">
+                        <span>Số lượng đã chọn:</span>
+                        <span class="fw-semibold text-dark" id="selected-qty-count">@Model.Items.Sum(i => i.Quantity)</span>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between mb-3 text-secondary">
+                        <span>Tạm tính:</span>
+                        <span class="fw-semibold text-dark" id="selected-subtotal-price">@Model.TotalCartPrice.ToString("N0")₫</span>
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-4 border-top pt-3">
+                        <span class="fw-bold text-dark fs-5">Tổng tiền:</span>
+                        <span class="total-price-highlight" id="selected-total-price">@Model.TotalCartPrice.ToString("N0")₫</span>
+                    </div>
+
+                    <a href="/Order/Checkout" id="btn-checkout" class="btn btn-checkout-premium mb-3">
+                        Tiến hành đặt hàng <i class="bi bi-arrow-right-short fs-4"></i>
+                    </a>
+
+                    <a href="/" class="btn btn-light w-100 rounded-pill fw-semibold py-2.5 text-secondary" style="font-size: 14px; border: 1px solid #dadce0;">
+                        <i class="bi bi-chevron-left me-1"></i>Tiếp tục mua sắm
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    }
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const checkboxes = document.querySelectorAll(".cart-item-checkbox");
+        const selectAll = document.getElementById("select-all-cart");
+        const selectedQtyCount = document.getElementById("selected-qty-count");
+        const selectedSubtotalPrice = document.getElementById("selected-subtotal-price");
+        const selectedTotalPrice = document.getElementById("selected-total-price");
+        const btnCheckout = document.getElementById("btn-checkout");
+
+        // Format currency helper
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('vi-VN').format(value) + "₫";
+        }
+
+        // Recalculate totals based on checked items
+        function updateSummary() {
+            let totalQty = 0;
+            let totalPrice = 0;
+            let checkedCount = 0;
+
+            checkboxes.forEach(cb => {
+                if (cb.checked) {
+                    const row = cb.closest(".cart-item-row");
+                    const qty = parseInt(row.getAttribute("data-quantity")) || 0;
+                    const subtotal = parseFloat(row.getAttribute("data-subtotal")) || 0;
+                    totalQty += qty;
+                    totalPrice += subtotal;
+                    checkedCount++;
+                }
+            });
+
+            // Update UI elements
+            selectedQtyCount.textContent = totalQty;
+            selectedSubtotalPrice.textContent = formatCurrency(totalPrice);
+            selectedTotalPrice.textContent = formatCurrency(totalPrice);
+
+            // Handle Checkout Button state and styles
+            if (checkedCount === 0) {
+                btnCheckout.classList.add("disabled");
+                btnCheckout.style.opacity = "0.5";
+                btnCheckout.style.pointerEvents = "none";
+            } else {
+                btnCheckout.classList.remove("disabled");
+                btnCheckout.style.opacity = "1";
+                btnCheckout.style.pointerEvents = "auto";
+            }
+
+            // Sync selectAll checkbox state
+            if (selectAll) {
+                selectAll.checked = (checkedCount === checkboxes.length);
+            }
+
+            // Optional: update checkout url with selected item ids
+            if (btnCheckout) {
+                const selectedIds = Array.from(checkboxes)
+                    .filter(cb => cb.checked)
+                    .map(cb => cb.value)
+                    .join(",");
+                btnCheckout.setAttribute("href", "/Order/Checkout?selectedIds=" + selectedIds);
+            }
+        }
+
+        // Handle individual checkbox changes
+        checkboxes.forEach(cb => {
+            cb.addEventListener("change", updateSummary);
+        });
+
+        // Handle select all checkbox change
+        if (selectAll) {
+            selectAll.addEventListener("change", function () {
+                checkboxes.forEach(cb => {
+                    cb.checked = selectAll.checked;
+                });
+                updateSummary();
+            });
+        }
+
+        // Run initial update
+        updateSummary();
+    });
+</script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // Cấu hình định dạng cửa sổ Toast nhỏ ở góc trên bên phải
+        const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000, // Tự động ẩn sau 3 giây
+        timerProgressBar: true,
+        didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer)
+        toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+        });
+
+        // Kiểm tra xem Server có gửi TempData["SuccessMessage"] về không
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <text>
+                Toast.fire({
+                icon: 'success',
+                title: '@TempData["SuccessMessage"]'
+                });
+            </text>
+        }
+
+        // Kiểm tra xem Server có gửi TempData["ErrorMessage"] về không (nếu có dùng)
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <text>
+                Toast.fire({
+                icon: 'error',
+                title: '@TempData["ErrorMessage"]'
+                });
+            </text>
+        }
+    </script>
+
+</body>
+</html>

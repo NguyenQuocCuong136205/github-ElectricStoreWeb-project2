@@ -25,6 +25,18 @@ namespace ElectricStore_Project.Controllers
             return View(searchResults);
         }
 
+        public async Task<IActionResult> Filter(int categoryId)
+        {
+
+            if (categoryId <= 0)
+            {
+                return View(new List<ProductDisplayDTO>());
+            }
+
+            var products = await productService.GetProductsByCategoryIdAsync(categoryId);
+            return View(products);
+        }
+
         public async Task<IActionResult> Details(int id)
         {
             var product = await productService.GetProductByIdAsync(id);

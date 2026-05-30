@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using ElectricStore_Project.DTOs.Login;
 using ElectricStore_Project.DTOs.Registers;
 using ElectricStore_Project.Services.Users;
+using ElectricStore_Project.Services.Carts;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Security.Claims;
@@ -16,10 +17,12 @@ namespace ElectricStore_Project.Controllers
     public class UserController : Controller
     {
         private readonly IUserService _userService;
+        private readonly ICartService _cartService;
 
-        public UserController(IUserService userService)
+        public UserController(IUserService userService, ICartService cartService)
         {
             this._userService = userService;
+            this._cartService = cartService;
         }
 
         [HttpGet]
@@ -91,6 +94,16 @@ namespace ElectricStore_Project.Controllers
             if (result.Success)
             {
                 TempData["SuccessMessage"] = "Đăng ký tài khoản thành công!";
+                //thêm  nghiệp vụ tạo cart khi user được tạo
+                if (!string.IsNullOrEmpty(result.Email))
+                {
+                    var newUser = await _userService.GetUserByEmailAsync(result.Email);
+                    if (newUser != null)
+                    {
+                        await _cartService.GetCartDisplayByUserIdAsync(newUser.Id);
+                    }
+                }
+
                 return RedirectToAction("Login", "User");
             }
 

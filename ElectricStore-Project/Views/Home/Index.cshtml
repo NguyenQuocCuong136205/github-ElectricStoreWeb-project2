@@ -1,7 +1,7 @@
-﻿@model List<ElectricStore_Project.DTOs.Products.ProductDisplayDTO>
+@model List<ElectricStore_Project.DTOs.Products.ProductDisplayDTO>
 
 @{
-    ViewData["Title"] = "Điện máy ElectriStore - Gợi Ý Cho Bạn";
+    ViewData["Title"] = "Điện máy ElectricStore - Gợi Ý Cho Bạn";
 }
 
 <style>
@@ -189,6 +189,16 @@
             color: #ffffff;
             box-shadow: 0 4px 10px rgba(26,115,232,0.2);
         }
+
+    /* Ensure the link wrapper doesn't force link colors */
+    .product-card-wrapper a {
+        text-decoration: none !important;
+        color: inherit !important;
+    }
+
+    .product-card-wrapper a:hover .product-name-title {
+        color: #1a73e8;
+    }
 </style>
 
 <!DOCTYPE html>
@@ -230,7 +240,7 @@
 
             <h1 class="display-4 fw-bold mb-3 position-relative"
                 style="z-index: 2; letter-spacing: -1px;">
-                ElectriStore
+                ElectricStore
             </h1>
 
             <p class="lead text-white-50 position-relative"
@@ -275,65 +285,60 @@
             {
                 var product = Model[i];
                 var isHidden = ViewData["SearchQuery"] == null && i >= 8; // Only hide items starting from index 8 if not searching
-
                 <div class="col product-card-wrapper @(isHidden ? "d-none" : "")" data-index="@i">
-                    <div class="product-card p-3">
-                        <div class="w-100 position-relative">
-                            <!-- Installment Tag -->
-                            @if (!string.IsNullOrEmpty(product.IstallmentTag))
-                            {
-                                <span class="installment-badge">@product.IstallmentTag</span>
-                            }
-
-                            <!-- Sharp Product Image Container -->
-                            <div class="img-container rounded-3 mb-3">
-                                <img src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&q=80&w=400" alt="@product.Name" loading="lazy" />
-                            </div>
-
-                            <!-- Config Specification Badge -->
-                            @* @if (!string.IsNullOrEmpty(product.spec))
-                            {
-                                <span class="specs-badge">@product.Specifications</span>
-                            } *@
-
-                            <!-- Clickable Title -->
-
-                            @* them action qua trang details *@
-                            <a asp-controller="Product"
-                               asp-action="Details"
-                               asp-route-id="@product.Id"
-                               class="product-name-title d-block"
-                               title="@product.Name">
-                                @product.Name
-                            </a>
-
-                            <!-- Pricing Row -->
-                            <div class="d-flex align-items-baseline flex-wrap">
-                                <span class="price-promo">@product.SalePrice.ToString("N0")₫</span>
-                                @if (product.OriginalPrice > product.SalePrice)
+                    <a asp-controller="Product" asp-action="Details" asp-route-id="@product.Id">
+                        <div class="product-card p-3">
+                            <div class="w-100 position-relative">
+                                <!-- Installment Tag -->
+                                @if (!string.IsNullOrEmpty(product.IstallmentTag))
                                 {
-                                    <span class="price-original">@product.OriginalPrice.ToString("N0")₫</span>
+                                    <span class="installment-badge">@product.IstallmentTag</span>
+                                }
+
+                                <!-- Sharp Product Image Container -->
+                                <div class="img-container rounded-3 mb-3">
+                                    <img src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&q=80&w=400" alt="@product.Name" loading="lazy" />
+                                </div>
+
+                                <!-- Config Specification Badge -->
+                                @* @if (!string.IsNullOrEmpty(product.spec))
+                                {
+                                    <span class="specs-badge">@product.Specifications</span>
+                                } *@
+
+                                <!-- Product Title (Changed to a div to prevent nested <a> tags) -->
+                                <div class="product-name-title d-block" title="@product.Name">
+                                    @product.Name
+                                </div>
+
+                                <!-- Pricing Row -->
+                                <div class="d-flex align-items-baseline flex-wrap">
+                                    <span class="price-promo">@product.SalePrice.ToString("N0")₫</span>
+                                    @if (product.OriginalPrice > product.SalePrice)
+                                    {
+                                        <span class="price-original">@product.OriginalPrice.ToString("N0")₫</span>
+                                    }
+                                </div>
+
+                                <!-- Premium Free Gift Badge -->
+                                @if (!string.IsNullOrEmpty(product.GiftInfo))
+                                {
+                                    <div class="gift-box">
+                                        <i class="bi bi-gift-fill text-success"></i>
+                                        <span class="text-truncate" title="@product.GiftInfo">@product.GiftInfo</span>
+                                    </div>
                                 }
                             </div>
 
-                            <!-- Premium Free Gift Badge -->
-                            @if (!string.IsNullOrEmpty(product.GiftInfo))
-                            {
-                                <div class="gift-box">
-                                    <i class="bi bi-gift-fill text-success"></i>
-                                    <span class="text-truncate" title="@product.GiftInfo">@product.GiftInfo</span>
-                                </div>
-                            }
+                            <!-- Bottom Stars & Sales Review Block -->
+                            <div class="review-line mt-auto">
+                                <span class="fw-semibold">@product.Rating</span>
+                                <i class="bi bi-star-fill star-icon"></i>
+                                <span class="divider">|</span>
+                                <span>Đã bán @product.SalceCount</span>
+                            </div>
                         </div>
-
-                        <!-- Bottom Stars & Sales Review Block -->
-                        <div class="review-line mt-auto">
-                            <span class="fw-semibold">@product.Rating</span>
-                            <i class="bi bi-star-fill star-icon"></i>
-                            <span class="divider">|</span>
-                            <span>Đã bán @product.SalceCount</span>
-                        </div>
-                    </div>
+                    </a>
                 </div>
             }
         </div>

@@ -9,5 +9,7 @@ namespace ElectricStore_Project.Repositories.Products
         Task<ElectricStore_Project.Models.Product?> GetProductByIdAsync(int id);
 
         Task<IEnumerable<ElectricStore_Project.Models.Product>> GetAllProductByKeyworkAsync(string keywork);
+
+        Task<IEnumerable<ElectricStore_Project.Models.Product>> GetProductsByCategoryIdAsync(int categoryId);
     }
 }

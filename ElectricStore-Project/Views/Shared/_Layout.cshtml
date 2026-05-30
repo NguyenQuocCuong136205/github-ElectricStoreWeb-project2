@@ -1,9 +1,27 @@
 @inject ElectricStore_Project.Models.ElectronicStoreContext _dbContext
 @{
     List<ElectricStore_Project.Models.Category> dbCategories = new List<ElectricStore_Project.Models.Category>();
+    int cartCount = 0;
+
     try
     {
         dbCategories = _dbContext.Categories.ToList();
+
+        // Calculate dynamic cart items count from database if user is logged in
+        if (User.Identity != null && User.Identity.IsAuthenticated)
+        {
+            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (int.TryParse(userIdClaim, out int loggedInUserId))
+            {
+                var userCart = _dbContext.Carts.FirstOrDefault(c => c.UserId == loggedInUserId);
+                if (userCart != null)
+                {
+                    cartCount = _dbContext.CartItems
+                        .Where(ci => ci.CartId == userCart.Id)
+                        .Sum(ci => ci.Quantity) ?? 0;
+                }
+            }
+        }
     }
     catch (Exception)
     {
@@ -15,12 +33,13 @@
         };
     }
 }
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - ElectriStore</title>
+    <title>@ViewData["Title"] - ElectricStore</title>
     <script type="importmap"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <!-- Google Fonts: Inter -->
@@ -85,11 +104,11 @@
 
                     <!-- Brand Brand Logo -->
                     <a class="navbar-brand fw-bold text-primary fs-3 d-flex align-items-center mb-0" asp-area="" asp-controller="Home" asp-action="Index" style="letter-spacing: -0.5px;">
-                        <i class="bi bi-lightning-charge-fill me-1 text-primary"></i>ElectriStore
+                        <i class="bi bi-lightning-charge-fill me-1 text-primary"></i>ElectricStore
                     </a>
 
                     <!-- Long Search Bar -->
-                    <form class="d-flex flex-grow-1 mx-md-4 my-2 my-md-0" action="/Product/Search" method="get" style="max-width: 720px;">
+                    <form class="d-flex flex-grow-1 mx-md-4 my-2 my-md-0" action="@Url.Action("Search", "Product", new { area = "" })" method="get" style="max-width: 720px;">
                         <div class="input-group search-group w-100">
                             <input type="text" name="keyword" class="form-control border-0 px-3 py-2.5" placeholder="Tìm kiếm sản phẩm trên ElectriStore..." aria-label="Search" value="@ViewData["SearchQuery"]" style="box-shadow: none; outline: none; font-size: 14.5px;">
                             <button class="btn btn-primary border-0 px-4 d-flex align-items-center justify-content-center" type="submit" style="background-color: #0d6efd; border-radius: 0; transition: background-color 0.2s;">
@@ -104,7 +123,7 @@
                         {
                             <!-- Authenticated View -->
                             <a class="btn btn-outline-primary rounded-pill px-3 py-2 fw-semibold d-flex align-items-center gap-2" asp-area="" asp-controller="User" asp-action="Information" style="font-size: 14.5px;">
-                                <i class="bi bi-person-circle fs-5"></i>Tài khoản (@User.Identity.Name)
+                                <i class="bi bi-person-circle fs-5"></i>(@User.Identity.Name)
                             </a>
                             <a class="btn btn-outline-primary rounded-pill px-3 py-2 fw-semibold d-flex align-items-center gap-2" asp-area="Admin" asp-controller="Home" asp-action="Index" style="font-size: 14.5px;">
                                 <i class="bi bi-person-circle fs-5"></i>ADMIN
@@ -113,7 +132,7 @@
                         else if (User.Identity != null && User.Identity.IsAuthenticated && !User.IsInRole("Admin"))
                         {
                             <a class="btn btn-outline-primary rounded-pill px-3 py-2 fw-semibold d-flex align-items-center gap-2" asp-area="" asp-controller="User" asp-action="Information" style="font-size: 14.5px;">
-                                <i class="bi bi-person-circle fs-5"></i>Tài khoản (@User.Identity.Name)
+                                <i class="bi bi-person-circle fs-5"></i>(@User.Identity.Name)
                             </a>
                         }
                         else
@@ -127,7 +146,20 @@
                             </a>
                         }
                     </div>
+
+                    <!-- Cart -->
+                    <div class="d-flex justify-content-end my-1">
+                        <a asp-controller="Cart" asp-action="Index" class="btn btn-outline-primary rounded-pill px-3 py-2 fw-semibold d-flex align-items-center gap-2 position-relative" style="font-size: 14.5px; transition: all 0.2s ease-in-out;">
+                            <i class="bi bi-cart3 fs-5"></i>
+                            <span>Giỏ hàng</span>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 11.5px; padding: 5px 8px;">
+                                @cartCount
+                            </span>
+                        </a>
+                    </div>
+
                 </div>
+
 
                 <!-- ROW 2: Dynamic Database-Driven Categories and Store Links -->
                 <div class="d-flex align-items-center justify-content-between border-top pt-2 mt-2 flex-wrap gap-2">
@@ -146,7 +178,7 @@
                             {
                                 imgUrl = "https://cdn-icons-png.flaticon.com/512/3616/3616215.png";
                             }
-                            else if (catName.Contains("máy tính", StringComparison.OrdinalIgnoreCase) || catName.Contains("computer", StringComparison.OrdinalIgnoreCase) || catName.Contains("laptop", StringComparison.OrdinalIgnoreCase))
+                            else if (catName.Contains("máy tính", StringComparison.OrdinalIgnoreCase) || catName.Contains("laptop", StringComparison.OrdinalIgnoreCase) || catName.Contains("laptop", StringComparison.OrdinalIgnoreCase))
                             {
                                 imgUrl = "https://cdn-icons-png.flaticon.com/512/3030/3030336.png";
                             }
@@ -167,7 +199,11 @@
                                 imgUrl = "https://cdn-icons-png.flaticon.com/512/3067/3067260.png";
                             }
 
-                            <a href="/Product/Search?keyword=@(System.Net.WebUtility.UrlEncode(catName))" class="category-item-link px-3 py-1.5 rounded-pill border-0 d-flex align-items-center gap-2 fw-semibold text-decoration-none shadow-sm">
+                            <a asp-controller="Product"
+                               asp-action="Filter"
+                               asp-route-categoryId="@cat.Id"
+                               asp-area=""
+                               class="category-item-link px-3 py-1.5 rounded-pill border-0 d-flex align-items-center gap-2 fw-semibold text-decoration-none shadow-sm">
                                 <img src="@imgUrl" alt="@catName" style="width: 18px; height: 18px; object-fit: contain;" />
                                 <span>@catName</span>
                             </a>

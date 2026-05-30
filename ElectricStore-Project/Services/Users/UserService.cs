@@ -140,6 +140,7 @@ namespace ElectricStore_Project.Services.Users
             {
                 return new RegisterResultDTO { Success = false, ErrorMessage = "Có lỗi xảy ra trong quá trình lưu dữ liệu. Vui lòng thử lại!" };
             }
+
             return new RegisterResultDTO { Success = true };
         }
 
