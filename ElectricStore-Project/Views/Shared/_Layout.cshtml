@@ -324,7 +324,7 @@
 
                         @foreach (var cat in dbCategories.Take(6))
                         {
-                            <a href="/Product/Search?keyword=@(System.Net.WebUtility.UrlEncode(cat.Name))"
+                            <a href="/Product/Filter?categoryId=@cat.Id"
                                class="badge rounded-pill text-dark bg-light border px-3 py-2 text-decoration-none">
 
                                 @cat.Name

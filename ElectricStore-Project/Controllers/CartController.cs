@@ -91,5 +91,10 @@ namespace ElectricStore_Project.Controllers
         {
             return View();
         }
+
+        public IActionResult CheckOut()
+        {
+            return View();
+        }
     }
 }

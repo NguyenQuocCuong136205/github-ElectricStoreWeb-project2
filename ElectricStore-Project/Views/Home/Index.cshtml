@@ -199,6 +199,13 @@
     .product-card-wrapper a:hover .product-name-title {
         color: #1a73e8;
     }
+
+    #homeBanner,
+    #homeBanner .carousel-inner,
+    #homeBanner .carousel-item {
+        border-radius: 20px;
+        overflow: hidden;
+    }
 </style>
 
 <!DOCTYPE html>
@@ -206,49 +213,103 @@
 <head>
 </head>
 <body>
-    <div class="container py-4">
-        <!-- Home Banner Placeholder / Header Area -->
-        <div class="p-5 text-center text-white rounded-4 shadow-sm position-relative overflow-hidden"
-             style="
-            background-image:
-            linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)),
-            url('/img/baner.png');
 
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
+    @* banner acction start *@
+    <div id="homeBanner"
+         class="carousel slide"
+         data-bs-ride="carousel"
+         data-bs-interval="3500">
 
-            min-height: 280px;
+        <div class="carousel-inner">
+            <!-- Slide 1 -->
+            <div class="carousel-item active">
+                <div class="p-5 text-center text-white position-relative"
+                     style="
+                    background-image:
+                    linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)),
+                    url('/img/banner/baner.png');
+                    background-size: cover;
+                    background-position: center;
+                    min-height: 280px;
+                    display:flex;
+                    flex-direction:column;
+                    justify-content:center;
+                    align-items:center;">
 
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            ">
+                    <h1 class="display-4 fw-bold">ElectricStore</h1>
+                    <p class="lead text-white-50">
+                        Trải nghiệm mua sắm thiết bị gia dụng và công nghệ hàng đầu Việt Nam
+                    </p>
 
-            <!-- Glow -->
-            <div class="position-absolute top-50 start-50 translate-middle"
-                 style="
-                width: 300px;
-                height: 300px;
-                background: radial-gradient(circle,
-                rgba(26,115,232,0.18) 0%,
-                rgba(0,0,0,0) 70%);
-                z-index: 1;
-                ">
+                </div>
             </div>
 
-            <h1 class="display-4 fw-bold mb-3 position-relative"
-                style="z-index: 2; letter-spacing: -1px;">
-                ElectricStore
-            </h1>
+            <!-- Slide 2 -->
+            <div class="carousel-item">
+                <div class="p-5 text-center text-white position-relative"
+                     style="
+                    background-image:
+                    linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)),
+                    url('/img/banner/baner_2.png');
+                    background-size: cover;
+                    background-position: center;
+                    min-height: 280px;
+                    display:flex;
+                    flex-direction:column;
+                    justify-content:center;
+                    align-items:center;">
 
-            <p class="lead text-white-50 position-relative"
-               style="z-index: 2; max-width: 700px;">
-                Trải nghiệm mua sắm thiết bị gia dụng và công nghệ hàng đầu Việt Nam
-            </p>
+                    <h1 class="display-4 fw-bold">Khuyến mãi lớn</h1>
+                    <p class="lead text-white-50">
+                        Giảm giá lên đến 50% cho nhiều sản phẩm
+                    </p>
+
+                </div>
+            </div>
+
+            <!-- Slide 3 -->
+            <div class="carousel-item">
+                <div class="p-5 text-center text-white position-relative"
+                     style="
+                    background-image:
+                    linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)),
+                    url('/img/banner/baner_3.png');
+                    background-size: cover;
+                    background-position: center;
+                    min-height: 280px;
+                    display:flex;
+                    flex-direction:column;
+                    justify-content:center;
+                    align-items:center;">
+
+                    <h1 class="display-4 fw-bold">Sản phẩm mới</h1>
+                    <p class="lead text-white-50">
+                        Cập nhật công nghệ mới nhất mỗi ngày
+                    </p>
+
+                </div>
+            </div>
 
         </div>
+
+        <!-- Nút Previous -->
+        <button class="carousel-control-prev"
+                type="button"
+                data-bs-target="#homeBanner"
+                data-bs-slide="prev">
+            <span class="carousel-control-prev-icon"></span>
+        </button>
+
+        <!-- Nút Next -->
+        <button class="carousel-control-next"
+                type="button"
+                data-bs-target="#homeBanner"
+                data-bs-slide="next">
+            <span class="carousel-control-next-icon"></span>
+        </button>
+
+    </div>
+    @* banner acction end *@
 
         @* @if (ViewData["SearchQuery"] != null)
         {
@@ -354,7 +415,6 @@
                 </div>
             </div>
         } *@
-    </div>
 
     <!-- SweetAlert2 Success & Error Toast Popup Notifications -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
